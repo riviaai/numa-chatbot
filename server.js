@@ -431,6 +431,20 @@ app.post("/api/chat", rateLimit, async (req, res) => {
   }
 });
 
+// ── API: Get conversation history ──
+app.get("/api/history/:sessionId", (req, res) => {
+  const sid = req.params.sessionId;
+  if (!sid || typeof sid !== "string" || sid.length > 100) {
+    return res.status(400).json({ error: "Session invalide." });
+  }
+  const session = conversationHistories.get(sid);
+  if (!session || !session.messages || session.messages.length === 0) {
+    return res.json({ messages: [] });
+  }
+  // Return messages for client display
+  res.json({ messages: session.messages });
+});
+
 // ── API: Health check ──
 app.get("/api/health", (req, res) => {
   res.json({

@@ -65,6 +65,18 @@
       box-shadow: 0 2px 12px rgba(108,71,255,0.2);
     }
 
+    .header-home {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: opacity 0.2s;
+    }
+    .header-home:hover { opacity: 0.85; }
+    .header-home:active { opacity: 0.7; }
+
     .mascot-container {
       position: relative;
       width: 48px;
@@ -590,6 +602,27 @@
       box-shadow: 0 4px 12px rgba(108,71,255,0.4);
     }
 
+    .new-conv-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1.5px solid var(--gray-200);
+      background: var(--white);
+      color: var(--gray-500);
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .new-conv-btn.visible { display: flex; }
+    .new-conv-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--accent-purple);
+    }
+
     .send-btn:active { transform: scale(0.95); }
 
     .send-btn:disabled {
@@ -759,6 +792,7 @@
 
   <!-- Header -->
   <header class="header" role="banner">
+    <div class="header-home" id="header-home" role="button" tabindex="0" aria-label="Nouvelle conversation">
     <div class="mascot-container">
       <div class="mascot-glow"></div>
       <svg class="mascot" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -790,6 +824,7 @@
       <h1><span>Numa</span></h1>
       <p>Ta guide en num&eacute;rologie</p>
     </div>
+    </div><!-- end header-home -->
     <div class="header-right">
       <div class="header-status" aria-live="polite">
         <div class="status-dot"></div>
@@ -877,6 +912,11 @@
 
   <!-- Input -->
   <div class="input-area">
+    <button class="new-conv-btn" id="new-conv-btn" aria-label="Nouvelle conversation" title="Nouvelle conversation">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </button>
     <div class="input-wrapper">
       <textarea id="message-input" rows="1" placeholder="Ta question &agrave; Numa..." aria-label="Message pour Numa" maxlength="2000"></textarea>
     </div>
@@ -921,7 +961,9 @@
         introMsg: 'Salut, je suis {fullName}, je suis n\u00e9(e) le {dob}. Je voudrais en savoir plus sur {interest}.',
         dobLabelPersonal: '{name}, quelle est ta date de naissance ?',
         iChemin: 'chemin de vie et mission de vie', iAmour: 'compatibilit\u00e9 amoureuse',
-        iCarriere: 'carri\u00e8re et r\u00e9ussite professionnelle', iPrevisions: 'ann\u00e9e personnelle et pr\u00e9visions'
+        iCarriere: 'carri\u00e8re et r\u00e9ussite professionnelle', iPrevisions: 'ann\u00e9e personnelle et pr\u00e9visions',
+        newConvConfirm: 'Commencer une nouvelle conversation ? L\u2019historique actuel sera conserv\u00e9.',
+        welcomeBack: 'Content de te revoir ! \u2728'
       },
       en: {
         code: 'EN', subtitle: 'Your numerology guide', status: 'Online',
@@ -945,7 +987,9 @@
         introMsg: 'Hi, I\'m {fullName}, I was born on {dob}. I\'d like to know more about {interest}.',
         dobLabelPersonal: '{name}, what\'s your date of birth?',
         iChemin: 'life path and life mission', iAmour: 'love compatibility',
-        iCarriere: 'career and professional success', iPrevisions: 'personal year and forecasts'
+        iCarriere: 'career and professional success', iPrevisions: 'personal year and forecasts',
+        newConvConfirm: 'Start a new conversation? Current history will be kept.',
+        welcomeBack: 'Welcome back! \u2728'
       },
       es: {
         code: 'ES', subtitle: 'Tu gu\u00eda de numerolog\u00eda', status: 'En l\u00ednea',
@@ -969,7 +1013,9 @@
         introMsg: 'Hola, soy {fullName}, nac\u00ed el {dob}. Me gustar\u00eda saber m\u00e1s sobre {interest}.',
         dobLabelPersonal: '{name}, \u00bfcu\u00e1l es tu fecha de nacimiento?',
         iChemin: 'camino de vida y misi\u00f3n', iAmour: 'compatibilidad amorosa',
-        iCarriere: 'carrera y \u00e9xito profesional', iPrevisions: 'a\u00f1o personal y predicciones'
+        iCarriere: 'carrera y \u00e9xito profesional', iPrevisions: 'a\u00f1o personal y predicciones',
+        newConvConfirm: '\u00bfIniciar una nueva conversaci\u00f3n? El historial actual se conservar\u00e1.',
+        welcomeBack: '\u00a1Me alegro de verte! \u2728'
       },
       de: {
         code: 'DE', subtitle: 'Dein Numerologie-Guide', status: 'Online',
@@ -993,7 +1039,9 @@
         introMsg: 'Hallo, ich bin {fullName}, geboren am {dob}. Ich m\u00f6chte mehr \u00fcber {interest} erfahren.',
         dobLabelPersonal: '{name}, wann bist du geboren?',
         iChemin: 'Lebensweg und Lebensmission', iAmour: 'Liebeskompatibilit\u00e4t',
-        iCarriere: 'Karriere und beruflicher Erfolg', iPrevisions: 'pers\u00f6nliches Jahr und Prognosen'
+        iCarriere: 'Karriere und beruflicher Erfolg', iPrevisions: 'pers\u00f6nliches Jahr und Prognosen',
+        newConvConfirm: 'Neues Gespr\u00e4ch starten? Der aktuelle Verlauf bleibt erhalten.',
+        welcomeBack: 'Sch\u00f6n, dich wiederzusehen! \u2728'
       },
       it: {
         code: 'IT', subtitle: 'La tua guida di numerologia', status: 'Online',
@@ -1017,7 +1065,9 @@
         introMsg: 'Ciao, sono {fullName}, sono nato/a il {dob}. Vorrei sapere di pi\u00f9 su {interest}.',
         dobLabelPersonal: '{name}, qual \u00e8 la tua data di nascita?',
         iChemin: 'percorso di vita e missione', iAmour: 'compatibilit\u00e0 amorosa',
-        iCarriere: 'carriera e successo professionale', iPrevisions: 'anno personale e previsioni'
+        iCarriere: 'carriera e successo professionale', iPrevisions: 'anno personale e previsioni',
+        newConvConfirm: 'Iniziare una nuova conversazione? La cronologia attuale verr\u00e0 conservata.',
+        welcomeBack: 'Che bello rivederti! \u2728'
       }
     };
 
@@ -1305,10 +1355,77 @@
     // Check if returning user
     var returningUser = false;
     try { returningUser = localStorage.getItem('numa_onboarded') === 'true'; } catch(e) {}
+    var newConvBtn = document.getElementById('new-conv-btn');
+
     if (returningUser && storedSession) {
       // Skip onboarding, go straight to chat
       welcome.style.display = 'none';
+      newConvBtn.classList.add('visible');
+      // Load chat history from server
+      (function loadHistory() {
+        fetch('/api/history/' + encodeURIComponent(sessionId))
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            if (data.messages && data.messages.length > 0) {
+              data.messages.forEach(function(m) {
+                addMessage(m.content, m.role === 'user' ? 'user' : 'bot');
+              });
+            } else {
+              // No history found, show a welcome-back message
+              addMessage(t('welcomeBack'), 'bot');
+            }
+          })
+          .catch(function() {
+            // Network error, show welcome-back anyway
+            addMessage(t('welcomeBack'), 'bot');
+          });
+      })();
     }
+
+    // ── New conversation function ──
+    function startNewConversation() {
+      if (!confirm(t('newConvConfirm'))) return;
+      // Generate new session
+      sessionId = 'session_' + Math.random().toString(36).substring(2, 10);
+      try { localStorage.setItem('numa_session_id', sessionId); } catch(e) {}
+      try { localStorage.removeItem('numa_onboarded'); } catch(e) {}
+      // Clear chat
+      chatArea.innerHTML = '';
+      // Re-add welcome screen
+      chatArea.appendChild(welcome);
+      welcome.style.display = '';
+      // Reset onboarding steps
+      document.getElementById('step-name').classList.remove('hidden');
+      document.getElementById('step-dob').classList.add('hidden');
+      document.getElementById('step-interest').classList.add('hidden');
+      nameInput.value = '';
+      surnameInput.value = '';
+      dobInput.value = '';
+      newConvBtn.classList.remove('visible');
+      returningUser = false;
+      nameInput.focus();
+    }
+
+    // Header click → new conversation
+    document.getElementById('header-home').addEventListener('click', function() {
+      if (welcome.style.display === 'none' || welcome.style.display === '') {
+        // Only if we're in chat mode (not already on welcome)
+        if (chatArea.querySelector('.message') || welcome.style.display === 'none') {
+          startNewConversation();
+        }
+      }
+    });
+    document.getElementById('header-home').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        this.click();
+      }
+    });
+
+    // New conversation button click
+    newConvBtn.addEventListener('click', function() {
+      startNewConversation();
+    });
 
     btnStepName.addEventListener('click', function() {
       var name = nameInput.value.trim();
@@ -1390,6 +1507,7 @@
 
     function startChat() {
       welcome.style.display = 'none';
+      newConvBtn.classList.add('visible');
       // Mark as onboarded for returning visits
       try { localStorage.setItem('numa_onboarded', 'true'); } catch(e) {}
       // Build intro message with full name
