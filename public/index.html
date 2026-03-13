@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Numa, votre guide intelligente en num&eacute;rologie. D&eacute;couvrez votre chemin de vie, nombre d'expression et plus encore.">
+  <meta name="theme-color" content="#6C47FF">
+  <title>Numa &mdash; Votre guide en num&eacute;rologie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --primary: #6C47FF;
+      --primary-dark: #5535E0;
+      --primary-light: #8B6FFF;
+      --bg: #F9F8FF;
+      --success: #00C897;
+      --error: #FF5C5C;
+      --white: #FFFFFF;
+      --gray-50: #F9FAFB;
+      --gray-100: #F3F4F6;
+      --gray-200: #E5E7EB;
+      --gray-300: #D1D5DB;
+      --gray-400: #9CA3AF;
+      --gray-500: #6B7280;
+      --gray-600: #4B5563;
+      --gray-700: #374151;
+      --gray-800: #1F2937;
+      --gray-900: #111827;
+      --accent-purple: #E8DEFF;
+      --accent-gold: #FFD166;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+      --shadow-lg: 0 10px 25px -3px rgba(108,71,255,0.12), 0 4px 6px -4px rgba(0,0,0,0.05);
+      --radius: 12px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--gray-800);
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: var(--white);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border-bottom: 1px solid var(--gray-200);
+      position: relative;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .mascot-container {
+      position: relative;
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+    }
+
+    .mascot {
+      width: 48px;
+      height: 48px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+
+    .mascot-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60px;
+      height: 60px;
+      background: radial-gradient(circle, rgba(108,71,255,0.15), transparent 70%);
+      border-radius: 50%;
+      animation: pulse-glow 2.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+      50% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+    }
+
+    .header-text h1 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--gray-900);
+      letter-spacing: -0.02em;
+    }
+
+    .header-text h1 span {
+      color: var(--primary);
+    }
+
+    .header-text p {
+      font-size: 0.75rem;
+      color: var(--gray-500);
+      font-weight: 500;
+    }
+
+    .header-status {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.7rem;
+      color: var(--success);
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: status-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes status-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* ── Chat area ── */
+    .chat-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: var(--bg);
+      scroll-behavior: smooth;
+    }
+
+    .chat-area::-webkit-scrollbar { width: 5px; }
+    .chat-area::-webkit-scrollbar-track { background: transparent; }
+    .chat-area::-webkit-scrollbar-thumb { background: rgba(108,71,255,0.2); border-radius: 3px; }
+    .chat-area::-webkit-scrollbar-thumb:hover { background: rgba(108,71,255,0.35); }
+
+    /* ── Welcome ── */
+    .welcome {
+      text-align: center;
+      padding: 40px 16px 20px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .welcome-mascot {
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 20px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .welcome h2 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--gray-900);
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .welcome h2 span { color: var(--primary); }
+
+    .welcome p {
+      color: var(--gray-500);
+      font-size: 0.88rem;
+      line-height: 1.6;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+
+    /* ── Suggestions ── */
+    .suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 24px;
+      padding: 0 8px;
+    }
+
+    .suggestion-btn {
+      background: var(--white);
+      border: 1.5px solid var(--gray-200);
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--gray-700);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .suggestion-btn:hover {
+      background: var(--primary);
+      color: var(--white);
+      border-color: var(--primary);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* ── Messages ── */
+    .message {
+      display: flex;
+      gap: 10px;
+      max-width: 80%;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message.bot { align-self: flex-start; }
+    .message.user { align-self: flex-end; flex-direction: row-reverse; }
+
+    .message-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .message.bot .message-avatar {
+      background: var(--accent-purple);
+    }
+
+    .message.user .message-avatar {
+      background: var(--primary);
+      color: var(--white);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .message-bubble {
+      padding: 12px 16px;
+      border-radius: 16px;
+      line-height: 1.6;
+      font-size: 0.88rem;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
+
+    .message.bot .message-bubble {
+      background: var(--white);
+      border: 1px solid var(--gray-100);
+      border-bottom-left-radius: 4px;
+      box-shadow: var(--shadow-sm);
+      color: var(--gray-800);
+    }
+
+    .message.user .message-bubble {
+      background: var(--primary);
+      color: var(--white);
+      border-bottom-right-radius: 4px;
+      box-shadow: var(--shadow-md);
+    }
+
+    /* ── Typing indicator ── */
+    .typing {
+      display: flex;
+      gap: 10px;
+      align-self: flex-start;
+      max-width: 80%;
+    }
+
+    .typing-dots {
+      background: var(--white);
+      border: 1px solid var(--gray-100);
+      border-radius: 16px;
+      border-bottom-left-radius: 4px;
+      padding: 14px 20px;
+      display: flex;
+      gap: 5px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .typing-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      animation: bounce 1.2s ease-in-out infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.15s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.3; }
+      30% { transform: translateY(-6px); opacity: 1; }
+    }
+
+    /* ── Input area ── */
+    .input-area {
+      padding: 12px 16px;
+      background: var(--white);
+      border-top: 1px solid var(--gray-200);
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      flex-shrink: 0;
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
+    }
+
+    .input-wrapper { flex: 1; position: relative; }
+
+    #message-input {
+      width: 100%;
+      padding: 11px 16px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 22px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      outline: none;
+      resize: none;
+      max-height: 120px;
+      line-height: 1.45;
+      transition: border-color 0.2s;
+      color: var(--gray-800);
+      background: var(--gray-50);
+    }
+
+    #message-input:focus {
+      border-color: var(--primary);
+      background: var(--white);
+      box-shadow: 0 0 0 3px rgba(108,71,255,0.1);
+    }
+
+    #message-input::placeholder { color: var(--gray-400); }
+
+    .send-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      background: var(--primary);
+      color: var(--white);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .send-btn:hover {
+      background: var(--primary-dark);
+      transform: scale(1.05);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .send-btn:active { transform: scale(0.95); }
+
+    .send-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* ── Markdown in messages ── */
+    .message-bubble strong, .message-bubble b {
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .message.user .message-bubble strong,
+    .message.user .message-bubble b {
+      color: var(--accent-gold);
+    }
+
+    /* ── Footer ── */
+    .legal-footer {
+      background: var(--white);
+      border-top: 1px solid var(--gray-200);
+      padding: 8px 16px;
+      text-align: center;
+      font-size: 0.68rem;
+      color: var(--gray-400);
+      flex-shrink: 0;
+    }
+
+    .legal-footer a {
+      color: var(--gray-500);
+      text-decoration: none;
+      padding: 4px 6px;
+      transition: color 0.2s;
+    }
+
+    .legal-footer a:hover { color: var(--primary); text-decoration: underline; }
+    .legal-footer .sep { margin: 0 2px; }
+
+    /* ── Cookie banner ── */
+    .cookie-banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--white);
+      border-top: 1px solid var(--gray-200);
+      padding: 16px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      z-index: 1000;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .cookie-banner p {
+      font-size: 0.8rem;
+      color: var(--gray-600);
+      max-width: 600px;
+      line-height: 1.5;
+    }
+
+    .cookie-banner a { color: var(--primary); text-decoration: underline; }
+
+    .cookie-btn {
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .cookie-btn-accept {
+      background: var(--primary);
+      color: var(--white);
+    }
+
+    .cookie-btn-accept:hover { background: var(--primary-dark); }
+
+    .cookie-btn-refuse {
+      background: var(--gray-100);
+      color: var(--gray-700);
+    }
+
+    .cookie-btn-refuse:hover { background: var(--gray-200); }
+
+    .cookie-banner.hidden { display: none; }
+
+    /* ── Focus visible ── */
+    .suggestion-btn:focus-visible,
+    .send-btn:focus-visible,
+    #message-input:focus-visible,
+    .cookie-btn:focus-visible {
+      outline: 3px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .header { padding: 10px 14px; gap: 10px; }
+      .mascot-container { width: 40px; height: 40px; }
+      .mascot { width: 40px; height: 40px; }
+      .header-text h1 { font-size: 1rem; }
+      .header-status { display: none; }
+      .message { max-width: 90%; }
+      .chat-area { padding: 14px; gap: 12px; }
+      .welcome { padding: 24px 10px 16px; }
+      .welcome-mascot { width: 72px; height: 72px; }
+      .welcome h2 { font-size: 1.15rem; }
+      .welcome p { font-size: 0.82rem; }
+      .suggestions { gap: 6px; }
+      .suggestion-btn { font-size: 0.75rem; padding: 6px 12px; }
+      .input-area { padding: 10px 12px; gap: 8px; }
+      #message-input { padding: 10px 14px; font-size: 0.85rem; }
+      .send-btn { width: 40px; height: 40px; }
+      .legal-footer { font-size: 0.62rem; padding: 6px 12px; }
+      .cookie-banner { padding: 12px 14px; }
+      .cookie-banner p { font-size: 0.72rem; }
+    }
+
+    @media (max-width: 380px) {
+      .suggestion-btn { font-size: 0.7rem; padding: 5px 10px; }
+      .welcome h2 { font-size: 1.05rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header" role="banner">
+    <div class="mascot-container">
+      <div class="mascot-glow"></div>
+      <svg class="mascot" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <ellipse cx="50" cy="62" rx="28" ry="30" fill="#E8DEFF" stroke="#6C47FF" stroke-width="2"/>
+        <ellipse cx="50" cy="68" rx="16" ry="18" fill="white" opacity="0.5"/>
+        <circle cx="50" cy="32" r="22" fill="#E8DEFF" stroke="#6C47FF" stroke-width="2"/>
+        <ellipse cx="42" cy="30" rx="4" ry="4.5" fill="#1F2937"/>
+        <ellipse cx="58" cy="30" rx="4" ry="4.5" fill="#1F2937"/>
+        <circle cx="43.5" cy="28.5" r="1.5" fill="white"/>
+        <circle cx="59.5" cy="28.5" r="1.5" fill="white"/>
+        <ellipse cx="36" cy="36" rx="5" ry="3" fill="#FFB5C5" opacity="0.5"/>
+        <ellipse cx="64" cy="36" rx="5" ry="3" fill="#FFB5C5" opacity="0.5"/>
+        <path d="M 44 37 Q 50 43 56 37" stroke="#1F2937" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M 30 22 L 50 -2 L 70 22" fill="#6C47FF" stroke="#5535E0" stroke-width="1.5"/>
+        <ellipse cx="50" cy="22" rx="22" ry="5" fill="#5535E0"/>
+        <polygon points="50,4 52,9 57,9 53,12 54,17 50,14 46,17 47,12 43,9 48,9" fill="#FFD166"/>
+        <path d="M 24 55 Q 14 50 18 42" stroke="#6C47FF" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M 76 55 Q 86 50 82 42" stroke="#6C47FF" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <line x1="82" y1="42" x2="90" y2="28" stroke="#FFD166" stroke-width="2.5" stroke-linecap="round"/>
+        <polygon points="90,28 92,24 88,24" fill="#FFD166"/>
+        <circle cx="92" cy="22" r="1.5" fill="#FFD166" opacity="0.8"><animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite"/></circle>
+        <circle cx="86" cy="24" r="1" fill="#6C47FF" opacity="0.6"><animate attributeName="opacity" values="0.2;0.8;0.2" dur="2s" repeatCount="indefinite"/></circle>
+        <circle cx="94" cy="28" r="1" fill="#FF5C5C" opacity="0.7"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.8s" repeatCount="indefinite"/></circle>
+        <circle cx="18" cy="40" r="5" fill="#E8DEFF" stroke="#6C47FF" stroke-width="1"/>
+        <text x="18" y="43" text-anchor="middle" font-size="7" font-weight="bold" fill="#6C47FF">7</text>
+      </svg>
+    </div>
+    <div class="header-text">
+      <h1><span>Numa</span></h1>
+      <p>Votre guide en num&eacute;rologie</p>
+    </div>
+    <div class="header-status" aria-live="polite">
+      <div class="status-dot"></div>
+      <span>En ligne</span>
+    </div>
+  </header>
+
+  <!-- Chat -->
+  <main class="chat-area" id="chat-area" role="log" aria-live="polite" aria-label="Conversation avec Numa">
+    <div class="welcome" id="welcome">
+      <svg class="welcome-mascot" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <ellipse cx="50" cy="62" rx="28" ry="30" fill="#E8DEFF" stroke="#6C47FF" stroke-width="2"/>
+        <ellipse cx="50" cy="68" rx="16" ry="18" fill="white" opacity="0.5"/>
+        <circle cx="50" cy="32" r="22" fill="#E8DEFF" stroke="#6C47FF" stroke-width="2"/>
+        <ellipse cx="42" cy="30" rx="4" ry="4.5" fill="#1F2937"/>
+        <ellipse cx="58" cy="30" rx="4" ry="4.5" fill="#1F2937"/>
+        <circle cx="43.5" cy="28.5" r="1.5" fill="white"/>
+        <circle cx="59.5" cy="28.5" r="1.5" fill="white"/>
+        <ellipse cx="36" cy="36" rx="5" ry="3" fill="#FFB5C5" opacity="0.5"/>
+        <ellipse cx="64" cy="36" rx="5" ry="3" fill="#FFB5C5" opacity="0.5"/>
+        <path d="M 44 37 Q 50 43 56 37" stroke="#1F2937" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M 30 22 L 50 -2 L 70 22" fill="#6C47FF" stroke="#5535E0" stroke-width="1.5"/>
+        <ellipse cx="50" cy="22" rx="22" ry="5" fill="#5535E0"/>
+        <polygon points="50,4 52,9 57,9 53,12 54,17 50,14 46,17 47,12 43,9 48,9" fill="#FFD166"/>
+        <path d="M 24 55 Q 14 50 18 42" stroke="#6C47FF" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M 76 55 Q 86 50 82 42" stroke="#6C47FF" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <line x1="82" y1="42" x2="90" y2="28" stroke="#FFD166" stroke-width="2.5" stroke-linecap="round"/>
+        <polygon points="90,28 92,24 88,24" fill="#FFD166"/>
+        <circle cx="92" cy="22" r="1.5" fill="#FFD166" opacity="0.8"><animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite"/></circle>
+        <circle cx="86" cy="24" r="1" fill="#6C47FF" opacity="0.6"><animate attributeName="opacity" values="0.2;0.8;0.2" dur="2s" repeatCount="indefinite"/></circle>
+        <circle cx="94" cy="28" r="1" fill="#FF5C5C" opacity="0.7"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.8s" repeatCount="indefinite"/></circle>
+        <circle cx="18" cy="40" r="5" fill="#E8DEFF" stroke="#6C47FF" stroke-width="1"/>
+        <text x="18" y="43" text-anchor="middle" font-size="7" font-weight="bold" fill="#6C47FF">7</text>
+      </svg>
+      <h2>Bienvenue, je suis <span>Numa</span></h2>
+      <p>Votre guide chaleureuse en num&eacute;rologie. Posez-moi une question, donnez-moi votre date de naissance ou votre pr&eacute;nom, et je vous r&eacute;v&eacute;lerai les secrets des nombres.</p>
+      <div class="suggestions">
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">Quel est mon chemin de vie ?</button>
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">Que signifie le nombre 7 ?</button>
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">Num&eacute;rologie chinoise</button>
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">Mon ann&eacute;e personnelle 2026</button>
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">Num&eacute;rologie de mon pr&eacute;nom</button>
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">Nombres ma&icirc;tres</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Input -->
+  <div class="input-area">
+    <div class="input-wrapper">
+      <textarea id="message-input" rows="1" placeholder="Posez votre question &agrave; Numa..." onkeydown="handleKeyDown(event)" aria-label="Message pour Numa" maxlength="2000"></textarea>
+    </div>
+    <button class="send-btn" id="send-btn" onclick="sendMessage()" aria-label="Envoyer le message">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="white"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Legal footer -->
+  <footer class="legal-footer">
+    &copy; 2026 Numa &mdash;
+    <a href="/legal.html">Mentions l&eacute;gales</a><span class="sep">|</span><a href="/privacy.html">Confidentialit&eacute;</a><span class="sep">|</span><a href="/terms.html">CGU/CGV</a>
+  </footer>
+
+  <!-- Cookie banner -->
+  <div class="cookie-banner hidden" id="cookie-banner" role="dialog" aria-label="Consentement aux cookies">
+    <p>Ce site utilise uniquement des cookies strictement n&eacute;cessaires au fonctionnement du service. Aucun cookie de suivi n'est utilis&eacute;. <a href="/privacy.html">En savoir plus</a></p>
+    <button class="cookie-btn cookie-btn-accept" onclick="acceptCookies()">Accepter</button>
+    <button class="cookie-btn cookie-btn-refuse" onclick="refuseCookies()">Refuser</button>
+  </div>
+
+  <script>
+    'use strict';
+
+    var chatArea = document.getElementById('chat-area');
+    var input = document.getElementById('message-input');
+    var sendBtn = document.getElementById('send-btn');
+    var welcome = document.getElementById('welcome');
+
+    var sessionId = 'session_' + Math.random().toString(36).substring(2, 10);
+    var isWaiting = false;
+
+    // ── Cookie consent ──
+    (function initCookieBanner() {
+      var CONSENT_KEY = 'numa_cookie_consent';
+      var stored = null;
+      try { stored = localStorage.getItem(CONSENT_KEY); } catch(e) {}
+      if (!stored) {
+        document.getElementById('cookie-banner').classList.remove('hidden');
+      }
+    })();
+
+    function acceptCookies() {
+      try { localStorage.setItem('numa_cookie_consent', 'accepted'); } catch(e) {}
+      document.getElementById('cookie-banner').classList.add('hidden');
+    }
+
+    function refuseCookies() {
+      try { localStorage.setItem('numa_cookie_consent', 'refused'); } catch(e) {}
+      document.getElementById('cookie-banner').classList.add('hidden');
+    }
+
+    // ── Auto-resize textarea ──
+    input.addEventListener('input', function() {
+      input.style.height = 'auto';
+      input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+    });
+
+    function handleKeyDown(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    }
+
+    function sendSuggestion(btn) {
+      input.value = btn.textContent;
+      sendMessage();
+    }
+
+    function escapeHtml(text) {
+      var div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function formatMessage(text) {
+      // Escape HTML first to prevent XSS, then apply safe formatting
+      text = escapeHtml(text);
+      text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      text = text.replace(/__(.*?)__/g, '<strong>$1</strong>');
+      text = text.replace(/(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
+      return text;
+    }
+
+    function addMessage(content, type) {
+      if (welcome && type === 'user') {
+        welcome.style.display = 'none';
+      }
+
+      var msg = document.createElement('div');
+      msg.className = 'message ' + type;
+
+      var avatar = document.createElement('div');
+      avatar.className = 'message-avatar';
+      avatar.setAttribute('aria-hidden', 'true');
+
+      if (type === 'bot') {
+        avatar.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.09 6.26L20.18 9l-5 3.64L16.82 19 12 15.27 7.18 19l1.64-6.36-5-3.64 6.09-.74z" fill="#6C47FF"/></svg>';
+      } else {
+        avatar.textContent = 'V';
+      }
+
+      var bubble = document.createElement('div');
+      bubble.className = 'message-bubble';
+      if (type === 'user') {
+        bubble.textContent = content;
+      } else {
+        bubble.innerHTML = formatMessage(content);
+      }
+
+      msg.appendChild(avatar);
+      msg.appendChild(bubble);
+      chatArea.appendChild(msg);
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    function showTyping() {
+      var typing = document.createElement('div');
+      typing.className = 'typing';
+      typing.id = 'typing';
+
+      var avatar = document.createElement('div');
+      avatar.className = 'message-avatar';
+      avatar.style.background = 'var(--accent-purple)';
+      avatar.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.09 6.26L20.18 9l-5 3.64L16.82 19 12 15.27 7.18 19l1.64-6.36-5-3.64 6.09-.74z" fill="#6C47FF"/></svg>';
+
+      var dots = document.createElement('div');
+      dots.className = 'typing-dots';
+      dots.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+
+      typing.appendChild(avatar);
+      typing.appendChild(dots);
+      chatArea.appendChild(typing);
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    function hideTyping() {
+      var typing = document.getElementById('typing');
+      if (typing) typing.remove();
+    }
+
+    async function sendMessage() {
+      var text = input.value.trim();
+      if (!text || isWaiting) return;
+
+      isWaiting = true;
+      sendBtn.disabled = true;
+      input.value = '';
+      input.style.height = 'auto';
+
+      addMessage(text, 'user');
+      showTyping();
+
+      try {
+        var res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, sessionId: sessionId }),
+        });
+
+        hideTyping();
+
+        if (res.status === 429) {
+          addMessage("Trop de messages envoy\u00e9s. Veuillez patienter une minute avant de r\u00e9essayer.", 'bot');
+        } else if (!res.ok) {
+          throw new Error('Erreur r\u00e9seau');
+        } else {
+          var data = await res.json();
+          addMessage(data.response, 'bot');
+        }
+      } catch (err) {
+        hideTyping();
+        addMessage("D\u00e9sol\u00e9, je ne parviens pas \u00e0 me connecter pour le moment. Veuillez r\u00e9essayer dans un instant.", 'bot');
+      }
+
+      isWaiting = false;
+      sendBtn.disabled = false;
+      input.focus();
+    }
+
+    // Focus input on load
+    input.focus();
+  </script>
+</body>
+</html>
