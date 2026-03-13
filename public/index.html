@@ -742,6 +742,28 @@
       if (typing) typing.remove();
     }
 
+    function addStreamingMessage() {
+      if (welcome) welcome.style.display = 'none';
+
+      var msg = document.createElement('div');
+      msg.className = 'message bot';
+
+      var avatar = document.createElement('div');
+      avatar.className = 'message-avatar';
+      avatar.setAttribute('aria-hidden', 'true');
+      avatar.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.09 6.26L20.18 9l-5 3.64L16.82 19 12 15.27 7.18 19l1.64-6.36-5-3.64 6.09-.74z" fill="#6C47FF"/></svg>';
+
+      var bubble = document.createElement('div');
+      bubble.className = 'message-bubble';
+      bubble.id = 'streaming-bubble';
+
+      msg.appendChild(avatar);
+      msg.appendChild(bubble);
+      chatArea.appendChild(msg);
+      chatArea.scrollTop = chatArea.scrollHeight;
+      return bubble;
+    }
+
     async function sendMessage() {
       var text = input.value.trim();
       if (!text || isWaiting) return;
@@ -761,19 +783,53 @@
           body: JSON.stringify({ message: text, sessionId: sessionId }),
         });
 
-        hideTyping();
-
         if (res.status === 429) {
-          addMessage("Trop de messages envoy\u00e9s. Veuillez patienter une minute avant de r\u00e9essayer.", 'bot');
-        } else if (!res.ok) {
-          throw new Error('Erreur r\u00e9seau');
-        } else {
-          var data = await res.json();
-          addMessage(data.response, 'bot');
+          hideTyping();
+          addMessage("Trop de messages envoy\u00e9s. Veuillez patienter une minute.", 'bot');
+          isWaiting = false;
+          sendBtn.disabled = false;
+          input.focus();
+          return;
         }
+
+        if (!res.ok) throw new Error('Erreur r\u00e9seau');
+
+        hideTyping();
+        var bubble = addStreamingMessage();
+        var fullText = '';
+
+        var reader = res.body.getReader();
+        var decoder = new TextDecoder();
+        var buffer = '';
+
+        while (true) {
+          var result = await reader.read();
+          if (result.done) break;
+
+          buffer += decoder.decode(result.value, { stream: true });
+          var lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+
+          for (var i = 0; i < lines.length; i++) {
+            var line = lines[i].trim();
+            if (!line.startsWith('data: ')) continue;
+            try {
+              var data = JSON.parse(line.slice(6));
+              if (data.type === 'delta') {
+                fullText += data.text;
+                bubble.innerHTML = formatMessage(fullText);
+                chatArea.scrollTop = chatArea.scrollHeight;
+              } else if (data.type === 'error') {
+                bubble.innerHTML = formatMessage(data.error || 'Erreur de connexion.');
+              }
+            } catch(e) {}
+          }
+        }
+
+        bubble.removeAttribute('id');
       } catch (err) {
         hideTyping();
-        addMessage("D\u00e9sol\u00e9, je ne parviens pas \u00e0 me connecter pour le moment. Veuillez r\u00e9essayer dans un instant.", 'bot');
+        addMessage("Oups, je n'arrive pas \u00e0 me connecter pour le moment. R\u00e9essaie dans un instant ! \uD83D\uDCAB", 'bot');
       }
 
       isWaiting = false;

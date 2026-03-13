@@ -300,21 +300,46 @@ app.post("/api/chat", rateLimit, async (req, res) => {
   }
 
   try {
-    // Timeout after 30s to avoid hanging requests
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 30000);
+    // Set SSE headers for streaming
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.flushHeaders();
 
-    const response = await anthropic.messages.create({
+    let fullText = "";
+
+    const stream = anthropic.messages.stream({
       model: "claude-sonnet-4-20250514",
       max_tokens: 1024,
       system: SYSTEM_PROMPT,
       messages: session.messages,
-    }, { signal: controller.signal }).finally(() => clearTimeout(timeout));
+    });
 
-    const assistantMessage = response.content[0].text;
-    session.messages.push({ role: "assistant", content: assistantMessage });
+    stream.on("text", (text) => {
+      fullText += text;
+      res.write(`data: ${JSON.stringify({ type: "delta", text })}\n\n`);
+    });
 
-    res.json({ response: assistantMessage });
+    stream.on("end", () => {
+      session.messages.push({ role: "assistant", content: fullText });
+      res.write(`data: ${JSON.stringify({ type: "done" })}\n\n`);
+      res.end();
+    });
+
+    stream.on("error", (error) => {
+      console.error("Erreur stream Anthropic:", error.message);
+      res.write(`data: ${JSON.stringify({ type: "error", error: "Erreur de communication." })}\n\n`);
+      res.end();
+    });
+
+    // Timeout after 60s
+    const timeout = setTimeout(() => {
+      stream.abort();
+      res.write(`data: ${JSON.stringify({ type: "error", error: "Temps de reponse depasse." })}\n\n`);
+      res.end();
+    }, 60000);
+
+    stream.finalMessage().then(() => clearTimeout(timeout)).catch(() => clearTimeout(timeout));
   } catch (error) {
     console.error("Erreur API Anthropic:", error.message);
 
