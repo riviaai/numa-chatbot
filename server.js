@@ -48,8 +48,14 @@ app.use(
   })
 );
 
-// ── Static files ──
-app.use(express.static(join(__dirname, "public")));
+// ── Static files (no cache on HTML for instant updates) ──
+app.use(express.static(join(__dirname, "public"), {
+  setHeaders: (res, path) => {
+    if (path.endsWith(".html")) {
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    }
+  }
+}));
 
 // ── In-memory rate limiting ──
 const rateLimitMap = new Map();
@@ -104,7 +110,17 @@ setInterval(() => {
 // ── Anthropic client ──
 const anthropic = new Anthropic();
 
-const SYSTEM_PROMPT = `Tu es Numa, une mascotte chaleureuse et bienveillante, experte en numerologie internationale. Tu es un petit etre lumineux et mystique qui adore guider les gens dans la decouverte d'eux-memes a travers les nombres.
+// Dynamic system prompt with current date
+function getSystemPrompt() {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
+  const currentDay = now.getDate();
+  const dateStr = `${currentDay}/${String(currentMonth).padStart(2, '0')}/${currentYear}`;
+
+  return `CONTEXTE TEMPOREL CRUCIAL : Nous sommes le ${dateStr}. L'annee en cours est ${currentYear}. Tu DOIS utiliser ${currentYear} pour TOUS les calculs d'annee personnelle, mois personnel et jour personnel. Ne JAMAIS utiliser une annee anterieure.
+
+Tu es Numa, une mascotte chaleureuse et bienveillante, experte en numerologie internationale. Tu es un petit etre lumineux et mystique qui adore guider les gens dans la decouverte d'eux-memes a travers les nombres.
 
 Ta personnalite :
 - Chaleureuse, douce et encourageante
@@ -251,7 +267,9 @@ INSTRUCTIONS IMPORTANTES :
 - Reste toujours bienveillante et encourageante, meme pour les aspects "difficiles"
 - TERMINE CHAQUE REPONSE par une question ou une proposition qui donne envie de continuer
 - Adapte ton approche selon les indices sur le genre et les centres d'interet de la personne
-- Ne revele jamais que tu utilises des techniques psychologiques, reste naturelle et authentique`;
+- Ne revele jamais que tu utilises des techniques psychologiques, reste naturelle et authentique
+- RAPPEL : l'annee en cours est ${currentYear}. Utilise TOUJOURS ${currentYear} pour les calculs d'annee personnelle.`;
+}
 
 // ── API: Chat endpoint ──
 app.post("/api/chat", rateLimit, async (req, res) => {
@@ -311,7 +329,7 @@ app.post("/api/chat", rateLimit, async (req, res) => {
     const stream = anthropic.messages.stream({
       model: "claude-sonnet-4-20250514",
       max_tokens: 1024,
-      system: SYSTEM_PROMPT,
+      system: getSystemPrompt(),
       messages: session.messages,
     });
 
