@@ -53,15 +53,15 @@
 
     /* ── Header ── */
     .header {
-      background: var(--white);
-      padding: 14px 20px;
+      background: linear-gradient(135deg, #6C47FF 0%, #8B6FFF 50%, #E8DEFF 100%);
+      padding: 16px 20px;
       display: flex;
       align-items: center;
       gap: 14px;
-      border-bottom: 1px solid var(--gray-200);
       position: relative;
       z-index: 10;
       flex-shrink: 0;
+      box-shadow: 0 2px 12px rgba(108,71,255,0.2);
     }
 
     .mascot-container {
@@ -102,17 +102,17 @@
     .header-text h1 {
       font-size: 1.15rem;
       font-weight: 800;
-      color: var(--gray-900);
+      color: var(--white);
       letter-spacing: -0.02em;
     }
 
     .header-text h1 span {
-      color: var(--primary);
+      color: var(--white);
     }
 
     .header-text p {
       font-size: 0.75rem;
-      color: var(--gray-500);
+      color: rgba(255,255,255,0.8);
       font-weight: 500;
     }
 
@@ -125,14 +125,14 @@
       align-items: center;
       gap: 6px;
       font-size: 0.7rem;
-      color: var(--success);
+      color: var(--accent-gold);
       font-weight: 600;
     }
 
     .status-dot {
       width: 7px;
       height: 7px;
-      background: var(--success);
+      background: var(--accent-gold);
       border-radius: 50%;
       animation: status-pulse 2s ease-in-out infinite;
     }
@@ -150,7 +150,7 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
-      background: var(--bg);
+      background: linear-gradient(180deg, #F3F0FF 0%, var(--bg) 30%);
       scroll-behavior: smooth;
     }
 
@@ -273,17 +273,17 @@
 
     .message.bot .message-bubble {
       background: var(--white);
-      border: 1px solid var(--gray-100);
+      border: 1px solid var(--gray-200);
       border-bottom-left-radius: 4px;
-      box-shadow: var(--shadow-sm);
+      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
       color: var(--gray-800);
     }
 
     .message.user .message-bubble {
-      background: var(--primary);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
       color: var(--white);
       border-bottom-right-radius: 4px;
-      box-shadow: var(--shadow-md);
+      box-shadow: 0 2px 8px rgba(108,71,255,0.3);
     }
 
     /* ── Typing indicator ── */
@@ -363,7 +363,7 @@
       height: 44px;
       border-radius: 50%;
       border: none;
-      background: var(--primary);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
       color: var(--white);
       cursor: pointer;
       display: flex;
@@ -371,12 +371,13 @@
       justify-content: center;
       transition: all 0.2s;
       flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(108,71,255,0.3);
     }
 
     .send-btn:hover {
-      background: var(--primary-dark);
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
       transform: scale(1.05);
-      box-shadow: var(--shadow-lg);
+      box-shadow: 0 4px 12px rgba(108,71,255,0.4);
     }
 
     .send-btn:active { transform: scale(0.95); }
@@ -487,30 +488,32 @@
 
     /* ── Responsive ── */
     @media (max-width: 600px) {
-      .header { padding: 10px 14px; gap: 10px; }
+      .header { padding: 12px 16px; gap: 10px; }
       .mascot-container { width: 40px; height: 40px; }
       .mascot { width: 40px; height: 40px; }
-      .header-text h1 { font-size: 1rem; }
-      .header-status { display: none; }
-      .message { max-width: 90%; }
-      .chat-area { padding: 14px; gap: 12px; }
-      .welcome { padding: 24px 10px 16px; }
+      .header-text h1 { font-size: 1.05rem; }
+      .header-status { font-size: 0.65rem; right: 14px; }
+      .message { max-width: 85%; }
+      .message-bubble { font-size: 0.84rem; padding: 10px 14px; }
+      .chat-area { padding: 12px; gap: 10px; }
+      .welcome { padding: 20px 10px 16px; }
       .welcome-mascot { width: 72px; height: 72px; }
       .welcome h2 { font-size: 1.15rem; }
       .welcome p { font-size: 0.82rem; }
       .suggestions { gap: 6px; }
-      .suggestion-btn { font-size: 0.75rem; padding: 6px 12px; }
+      .suggestion-btn { font-size: 0.75rem; padding: 7px 14px; }
       .input-area { padding: 10px 12px; gap: 8px; }
-      #message-input { padding: 10px 14px; font-size: 0.85rem; }
+      #message-input { padding: 10px 14px; font-size: 0.85rem; border-radius: 20px; }
       .send-btn { width: 40px; height: 40px; }
-      .legal-footer { font-size: 0.62rem; padding: 6px 12px; }
-      .cookie-banner { padding: 12px 14px; }
+      .legal-footer { font-size: 0.6rem; padding: 5px 12px; }
+      .cookie-banner { padding: 10px 14px; }
       .cookie-banner p { font-size: 0.72rem; }
     }
 
     @media (max-width: 380px) {
       .suggestion-btn { font-size: 0.7rem; padding: 5px 10px; }
       .welcome h2 { font-size: 1.05rem; }
+      .message { max-width: 88%; }
     }
   </style>
 </head>
