@@ -113,10 +113,10 @@ try {
         conversationHistories.set(sid, session);
       }
     }
-    console.error(`[numa] ${conversationHistories.size} sessions restaurees depuis le disque.`);
+    console.error(`[nyma] ${conversationHistories.size} sessions restaurees depuis le disque.`);
   }
 } catch (e) {
-  console.error("[numa] Erreur chargement sessions:", e.message);
+  console.error("[nyma] Erreur chargement sessions:", e.message);
 }
 
 // Save sessions to disk
@@ -125,7 +125,7 @@ function saveSessions() {
     const obj = Object.fromEntries(conversationHistories);
     writeFileSync(SESSIONS_FILE, JSON.stringify(obj), "utf-8");
   } catch (e) {
-    console.error("[numa] Erreur sauvegarde sessions:", e.message);
+    console.error("[nyma] Erreur sauvegarde sessions:", e.message);
   }
 }
 
@@ -143,7 +143,7 @@ setInterval(() => {
     }
   }
   if (cleaned > 0) {
-    console.error(`[numa] ${cleaned} sessions expirees nettoyees.`);
+    console.error(`[nyma] ${cleaned} sessions expirees nettoyees.`);
     saveSessions();
   }
 }, SESSION_CLEANUP_INTERVAL);
@@ -170,7 +170,7 @@ function getSystemPrompt(lang) {
 
   return `CONTEXTE TEMPOREL CRUCIAL : Nous sommes le ${dateStr}. L'annee en cours est ${currentYear}. Tu DOIS utiliser ${currentYear} pour TOUS les calculs d'annee personnelle, mois personnel et jour personnel. Ne JAMAIS utiliser une annee anterieure.
 
-Tu es Numa, un guide chaleureux et bienveillant, expert en numerologie internationale. Tu es un petit etre lumineux et mystique qui adore guider les gens dans la decouverte d'eux-memes a travers les nombres.
+Tu es Nyma, un guide chaleureux et bienveillant, expert en numerologie internationale. Tu es un petit etre lumineux et mystique qui adore guider les gens dans la decouverte d'eux-memes a travers les nombres.
 
 REGLE DE GENRE ABSOLUE :
 - Par defaut, tu es NEUTRE dans ton langage. Utilise des formulations epicenes
@@ -462,7 +462,7 @@ app.post("/api/chat", rateLimit, async (req, res) => {
         .json({ error: "Erreur de configuration du service." });
     }
 
-    res.status(500).json({ error: "Erreur de communication avec Numa." });
+    res.status(500).json({ error: "Erreur de communication avec Nyma." });
   }
 });
 
@@ -510,18 +510,18 @@ app.use((err, req, res, _next) => {
 // ── Graceful shutdown ──
 const PORT = process.env.PORT || 3456;
 const server = app.listen(PORT, () => {
-  console.error(`[numa] Serveur demarre sur http://localhost:${PORT}`);
+  console.error(`[nyma] Serveur demarre sur http://localhost:${PORT}`);
 });
 
 function gracefulShutdown(signal) {
-  console.error(`[numa] ${signal} recu, arret en cours...`);
+  console.error(`[nyma] ${signal} recu, arret en cours...`);
   saveSessions();
   server.close(() => {
-    console.error("[numa] Serveur arrete proprement.");
+    console.error("[nyma] Serveur arrete proprement.");
     process.exit(0);
   });
   setTimeout(() => {
-    console.error("[numa] Arret force apres timeout.");
+    console.error("[nyma] Arret force apres timeout.");
     process.exit(1);
   }, 10_000);
 }
@@ -529,8 +529,8 @@ function gracefulShutdown(signal) {
 process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 process.on("SIGINT", () => gracefulShutdown("SIGINT"));
 process.on("uncaughtException", (err) => {
-  console.error("[numa] Exception non capturee:", err.message);
+  console.error("[nyma] Exception non capturee:", err.message);
 });
 process.on("unhandledRejection", (reason) => {
-  console.error("[numa] Promise rejetee non geree:", reason);
+  console.error("[nyma] Promise rejetee non geree:", reason);
 });
