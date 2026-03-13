@@ -47,6 +47,7 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
@@ -146,6 +147,7 @@
     .chat-area {
       flex: 1;
       overflow-y: auto;
+      overflow-x: hidden;
       padding: 20px;
       display: flex;
       flex-direction: column;
@@ -362,7 +364,10 @@
       line-height: 1.6;
       font-size: 0.88rem;
       word-wrap: break-word;
+      overflow-wrap: break-word;
       white-space: pre-wrap;
+      min-width: 0;
+      overflow: hidden;
     }
 
     .message.bot .message-bubble {
@@ -424,6 +429,8 @@
       align-items: flex-end;
       flex-shrink: 0;
       padding-bottom: max(12px, env(safe-area-inset-bottom));
+      position: relative;
+      z-index: 5;
     }
 
     .input-wrapper { flex: 1; position: relative; }
@@ -574,10 +581,13 @@
     /* ── Focus visible ── */
     .suggestion-btn:focus-visible,
     .send-btn:focus-visible,
-    #message-input:focus-visible,
     .cookie-btn:focus-visible {
       outline: 3px solid var(--primary);
       outline-offset: 2px;
+    }
+
+    #message-input:focus-visible {
+      outline: none;
     }
 
     /* ── Responsive ── */
@@ -587,7 +597,7 @@
       .mascot { width: 40px; height: 40px; }
       .header-text h1 { font-size: 1.05rem; }
       .header-status { font-size: 0.65rem; right: 14px; }
-      .message { max-width: 85%; }
+      .message { max-width: 88%; }
       .message-bubble { font-size: 0.84rem; padding: 10px 14px; }
       .chat-area { padding: 12px; gap: 10px; }
       .welcome { padding: 20px 10px 16px; }
@@ -596,10 +606,10 @@
       .welcome p { font-size: 0.82rem; }
       .suggestions { gap: 6px; }
       .suggestion-btn { font-size: 0.75rem; padding: 7px 14px; }
-      .input-area { padding: 10px 12px; gap: 8px; }
+      .input-area { padding: 8px 10px; gap: 8px; padding-bottom: max(8px, env(safe-area-inset-bottom)); }
       #message-input { padding: 10px 14px; font-size: 0.85rem; border-radius: 20px; }
       .send-btn { width: 40px; height: 40px; }
-      .legal-footer { font-size: 0.6rem; padding: 5px 12px; }
+      .legal-footer { display: none; }
       .cookie-banner { padding: 10px 14px; }
       .cookie-banner p { font-size: 0.72rem; }
     }
@@ -719,7 +729,7 @@
   <!-- Input -->
   <div class="input-area">
     <div class="input-wrapper">
-      <textarea id="message-input" rows="1" placeholder="Posez votre question &agrave; Numa..." aria-label="Message pour Numa" maxlength="2000"></textarea>
+      <textarea id="message-input" rows="1" placeholder="Ta question &agrave; Numa..." aria-label="Message pour Numa" maxlength="2000"></textarea>
     </div>
     <button class="send-btn" id="send-btn" aria-label="Envoyer le message">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
