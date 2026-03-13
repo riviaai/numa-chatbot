@@ -979,7 +979,7 @@
         interestSuper: 'Great {name}! What interests you?',
         interest1: '\uD83C\uDF1F My life path', interest2: '\u2764\uFE0F Love & compatibility',
         interest3: '\uD83D\uDCBC Career & money', interest4: '\uD83D\uDD2E 2026 Forecast',
-        inputPlaceholder: 'Your question &agrave; Nyma...',
+        inputPlaceholder: 'Your question for Nyma...',
         cookieText: 'This site only uses strictly necessary cookies. No tracking cookies.',
         cookieMore: 'Learn more', cookieAccept: 'Accept', cookieRefuse: 'Decline',
         errorConnect: 'Oops, I can\'t connect right now. Try again in a moment! \uD83D\uDCAB',
@@ -1206,7 +1206,7 @@
       if (type === 'bot') {
         avatar.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.09 6.26L20.18 9l-5 3.64L16.82 19 12 15.27 7.18 19l1.64-6.36-5-3.64 6.09-.74z" fill="#6C47FF"/></svg>';
       } else {
-        avatar.textContent = 'V';
+        avatar.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" fill="white"/></svg>';
       }
 
       var bubble = document.createElement('div');
