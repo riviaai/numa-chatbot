@@ -232,6 +232,27 @@
       box-shadow: 0 0 0 3px rgba(108,71,255,0.1);
     }
 
+    .onboard-hint {
+      font-size: 0.75rem;
+      color: var(--gray-400);
+      font-weight: 500;
+    }
+
+    .onboard-hint.error {
+      color: var(--error);
+    }
+
+    .onboarding-input.input-error {
+      border-color: var(--error);
+      animation: shake 0.3s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+
     .onboarding-btn {
       padding: 12px 32px;
       background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
@@ -702,7 +723,8 @@
       <!-- Onboarding step 2: Date de naissance -->
       <div class="onboarding-step hidden" id="step-dob">
         <label class="onboarding-label" id="dob-label">Et ta date de naissance ?</label>
-        <input type="date" id="onboard-dob" class="onboarding-input" max="2010-01-01">
+        <input type="text" id="onboard-dob" class="onboarding-input" placeholder="ex : 24/06/1990" inputmode="numeric" maxlength="10" autocomplete="bday">
+        <span class="onboard-hint" id="dob-hint">Format : JJ/MM/AAAA</span>
         <button class="onboarding-btn" id="btn-step-dob">Continuer &#x2192;</button>
       </div>
 
@@ -983,9 +1005,48 @@
       if (e.key === 'Enter') btnStepName.click();
     });
 
+    // Auto-format date: add slashes as user types
+    dobInput.addEventListener('input', function() {
+      var v = dobInput.value.replace(/[^\d]/g, '');
+      if (v.length > 8) v = v.substring(0, 8);
+      if (v.length >= 5) {
+        v = v.substring(0, 2) + '/' + v.substring(2, 4) + '/' + v.substring(4);
+      } else if (v.length >= 3) {
+        v = v.substring(0, 2) + '/' + v.substring(2);
+      }
+      dobInput.value = v;
+      // Clear error state on typing
+      dobInput.classList.remove('input-error');
+      document.getElementById('dob-hint').textContent = 'Format : JJ/MM/AAAA';
+      document.getElementById('dob-hint').classList.remove('error');
+    });
+
+    function parseDob(val) {
+      // Accept JJ/MM/AAAA or JJ-MM-AAAA or JJ.MM.AAAA
+      var parts = val.trim().split(/[\/\-\.]/);
+      if (parts.length !== 3) return null;
+      var day = parseInt(parts[0], 10);
+      var month = parseInt(parts[1], 10);
+      var year = parseInt(parts[2], 10);
+      if (isNaN(day) || isNaN(month) || isNaN(year)) return null;
+      if (day < 1 || day > 31 || month < 1 || month > 12) return null;
+      if (year < 1900 || year > 2015) return null;
+      return { day: day, month: month, year: year };
+    }
+
     btnStepDob.addEventListener('click', function() {
-      if (!dobInput.value) { dobInput.focus(); return; }
-      onboardData.dob = dobInput.value;
+      var parsed = parseDob(dobInput.value);
+      if (!parsed) {
+        dobInput.classList.add('input-error');
+        var hint = document.getElementById('dob-hint');
+        hint.textContent = 'Entre une date valide (ex : 24/06/1990)';
+        hint.classList.add('error');
+        dobInput.focus();
+        return;
+      }
+      var dd = String(parsed.day).padStart(2, '0');
+      var mm = String(parsed.month).padStart(2, '0');
+      onboardData.dob = dd + '/' + mm + '/' + parsed.year;
       document.getElementById('step-dob').classList.add('hidden');
       document.getElementById('step-interest').classList.remove('hidden');
       document.getElementById('interest-label').textContent = 'Super ' + onboardData.name + ' ! Qu\u2019est-ce qui t\u2019int\u00e9resse ?';
@@ -1004,11 +1065,8 @@
 
     function startChat() {
       welcome.style.display = 'none';
-      // Format date
-      var parts = onboardData.dob.split('-');
-      var dateFormatted = parts[2] + '/' + parts[1] + '/' + parts[0];
-      // Build intro message
-      var introMsg = 'Salut, je suis ' + onboardData.name + ', je suis n\u00e9(e) le ' + dateFormatted + '. Je voudrais en savoir plus sur ' + onboardData.interest + '.';
+      // Build intro message (dob already in DD/MM/YYYY format)
+      var introMsg = 'Salut, je suis ' + onboardData.name + ', je suis n\u00e9(e) le ' + onboardData.dob + '. Je voudrais en savoir plus sur ' + onboardData.interest + '.';
       input.value = introMsg;
       sendMessage();
     }
