@@ -153,37 +153,53 @@
     }
 
     .lang-btn {
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.35);
+      border: 1.5px solid rgba(255,255,255,0.7);
       border-radius: 8px;
-      padding: 3px 8px;
+      padding: 6px 12px;
       font-family: 'Inter', sans-serif;
-      font-size: 0.65rem;
-      font-weight: 700;
-      color: rgba(255,255,255,0.9);
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: #fff;
       cursor: pointer;
       transition: all 0.2s;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      min-height: 34px;
+      min-width: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
     }
 
-    .lang-btn:hover { background: rgba(255,255,255,0.25); }
+    .lang-btn:hover { background: rgba(255,255,255,0.5); }
 
     .text-size-btn {
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.35);
+      border: 1.5px solid rgba(255,255,255,0.7);
       border-radius: 8px;
-      padding: 2px 6px;
+      padding: 6px 10px;
       font-family: 'Inter', sans-serif;
-      font-size: 0.6rem;
-      font-weight: 700;
-      color: rgba(255,255,255,0.9);
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: #fff;
       cursor: pointer;
       transition: all 0.2s;
       line-height: 1;
+      min-height: 34px;
+      min-width: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
     }
 
-    .text-size-btn:hover { background: rgba(255,255,255,0.25); }
+    .text-size-btn:hover { background: rgba(255,255,255,0.5); }
 
     body.text-lg .message-bubble { font-size: 1.05rem !important; line-height: 1.7 !important; }
     body.text-lg .onboarding-label { font-size: 1.15rem !important; }
@@ -740,7 +756,8 @@
       .header-text h1 { font-size: 1.05rem; }
       .header-right { right: 10px; gap: 6px; }
       .header-status { font-size: 0.6rem; }
-      .lang-btn { font-size: 0.6rem; padding: 2px 6px; }
+      .lang-btn { font-size: 0.75rem; padding: 5px 10px; min-height: 30px; min-width: 30px; }
+      .text-size-btn { font-size: 0.75rem; padding: 5px 8px; min-height: 30px; min-width: 30px; }
       .message { max-width: 88%; }
       .message-bubble { font-size: 0.84rem; padding: 10px 14px; }
       .chat-area { padding: 12px; gap: 10px; }
@@ -874,11 +891,10 @@
       <h2>Bienvenue, je suis <span>Nuta</span> &#x2728;</h2>
       <p id="welcome-text">Avant de r&eacute;v&eacute;ler tes secrets num&eacute;rologiques, j'ai besoin de te conna&icirc;tre un peu...</p>
 
-      <!-- Onboarding step 1: Prénom + Nom -->
+      <!-- Onboarding step 1: Prénom uniquement -->
       <div class="onboarding-step" id="step-name">
         <label class="onboarding-label">Comment tu t'appelles ?</label>
         <input type="text" id="onboard-name" class="onboarding-input" placeholder="Ton pr&eacute;nom..." maxlength="50" autocomplete="given-name">
-        <input type="text" id="onboard-surname" class="onboarding-input" placeholder="Ton nom de famille..." maxlength="50" autocomplete="family-name">
         <button class="onboarding-btn" id="btn-step-name">Continuer &#x2192;</button>
       </div>
 
@@ -918,7 +934,7 @@
       </svg>
     </button>
     <div class="input-wrapper">
-      <textarea id="message-input" rows="1" placeholder="Ta question &agrave; Nuta" maxlength="2000"></textarea>
+      <textarea id="message-input" rows="1" placeholder="Ta question à Nuta..." maxlength="2000"></textarea>
     </div>
     <button class="send-btn" id="send-btn" aria-label="Envoyer le message">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -944,7 +960,7 @@
         welcomeTitle: 'Bienvenue, je suis <span>Nuta</span> \u2728',
         welcomeText: 'Avant de r\u00e9v\u00e9ler tes secrets num\u00e9rologiques, j\'ai besoin de te conna\u00eetre un peu...',
         stepNameLabel: 'Comment tu t\'appelles ?',
-        namePlaceholder: 'Ton pr\u00e9nom...', surnamePlaceholder: 'Ton nom de famille...',
+        namePlaceholder: 'Ton pr\u00e9nom...',
         continueBtn: 'Continuer \u2192',
         stepDobLabel: 'Et ta date de naissance ?',
         dobPlaceholder: 'ex : 24/06/1990', dobHint: 'Format : JJ/MM/AAAA',
@@ -953,12 +969,12 @@
         interestSuper: 'Super {name} ! Qu\u2019est-ce qui t\u2019int\u00e9resse ?',
         interest1: '\uD83C\uDF1F Mon chemin de vie', interest2: '\u2764\uFE0F Amour & compatibilit\u00e9',
         interest3: '\uD83D\uDCBC Carri\u00e8re & argent', interest4: '\uD83D\uDD2E Pr\u00e9visions 2026',
-        inputPlaceholder: 'Ta question &agrave; Nuta...',
+        inputPlaceholder: 'Ta question à Nuta...',
         cookieText: 'Ce site utilise uniquement des cookies strictement n\u00e9cessaires. Aucun cookie de suivi.',
         cookieMore: 'En savoir plus', cookieAccept: 'Accepter', cookieRefuse: 'Refuser',
         errorConnect: 'Oups, je n\'arrive pas \u00e0 me connecter pour le moment. R\u00e9essaie dans un instant ! \uD83D\uDCAB',
         errorRate: 'Trop de messages envoy\u00e9s. Veuillez patienter une minute.',
-        introMsg: 'Salut, je suis {fullName}, je suis n\u00e9(e) le {dob}. Je voudrais en savoir plus sur {interest}.',
+        introMsg: 'Salut, je m\'appelle {name}, je suis n\u00e9(e) le {dob}. Je voudrais en savoir plus sur {interest}.',
         dobLabelPersonal: '{name}, quelle est ta date de naissance ?',
         iChemin: 'chemin de vie et mission de vie', iAmour: 'compatibilit\u00e9 amoureuse',
         iCarriere: 'carri\u00e8re et r\u00e9ussite professionnelle', iPrevisions: 'ann\u00e9e personnelle et pr\u00e9visions',
@@ -970,7 +986,7 @@
         welcomeTitle: 'Welcome, I\'m <span>Nuta</span> \u2728',
         welcomeText: 'Before revealing your numerological secrets, I need to get to know you a little...',
         stepNameLabel: 'What\'s your name?',
-        namePlaceholder: 'Your first name...', surnamePlaceholder: 'Your last name...',
+        namePlaceholder: 'Your first name...',
         continueBtn: 'Continue \u2192',
         stepDobLabel: 'And your date of birth?',
         dobPlaceholder: 'e.g. 24/06/1990', dobHint: 'Format: DD/MM/YYYY',
@@ -984,7 +1000,7 @@
         cookieMore: 'Learn more', cookieAccept: 'Accept', cookieRefuse: 'Decline',
         errorConnect: 'Oops, I can\'t connect right now. Try again in a moment! \uD83D\uDCAB',
         errorRate: 'Too many messages sent. Please wait a minute.',
-        introMsg: 'Hi, I\'m {fullName}, I was born on {dob}. I\'d like to know more about {interest}.',
+        introMsg: 'Hi, my name is {name}, I was born on {dob}. I\'d like to know more about {interest}.',
         dobLabelPersonal: '{name}, what\'s your date of birth?',
         iChemin: 'life path and life mission', iAmour: 'love compatibility',
         iCarriere: 'career and professional success', iPrevisions: 'personal year and forecasts',
@@ -996,7 +1012,7 @@
         welcomeTitle: 'Bienvenido/a, soy <span>Nuta</span> \u2728',
         welcomeText: 'Antes de revelar tus secretos numerol\u00f3gicos, necesito conocerte un poco...',
         stepNameLabel: '\u00bfC\u00f3mo te llamas?',
-        namePlaceholder: 'Tu nombre...', surnamePlaceholder: 'Tu apellido...',
+        namePlaceholder: 'Tu nombre...',
         continueBtn: 'Continuar \u2192',
         stepDobLabel: '\u00bfY tu fecha de nacimiento?',
         dobPlaceholder: 'ej: 24/06/1990', dobHint: 'Formato: DD/MM/AAAA',
@@ -1010,7 +1026,7 @@
         cookieMore: 'M\u00e1s info', cookieAccept: 'Aceptar', cookieRefuse: 'Rechazar',
         errorConnect: '\u00a1Ups, no puedo conectarme ahora. Int\u00e9ntalo en un momento! \uD83D\uDCAB',
         errorRate: 'Demasiados mensajes enviados. Espera un minuto.',
-        introMsg: 'Hola, soy {fullName}, nac\u00ed el {dob}. Me gustar\u00eda saber m\u00e1s sobre {interest}.',
+        introMsg: 'Hola, me llamo {name}, nac\u00ed el {dob}. Me gustar\u00eda saber m\u00e1s sobre {interest}.',
         dobLabelPersonal: '{name}, \u00bfcu\u00e1l es tu fecha de nacimiento?',
         iChemin: 'camino de vida y misi\u00f3n', iAmour: 'compatibilidad amorosa',
         iCarriere: 'carrera y \u00e9xito profesional', iPrevisions: 'a\u00f1o personal y predicciones',
@@ -1022,7 +1038,7 @@
         welcomeTitle: 'Willkommen, ich bin <span>Nuta</span> \u2728',
         welcomeText: 'Bevor ich deine numerologischen Geheimnisse enth\u00fclle, muss ich dich ein wenig kennenlernen...',
         stepNameLabel: 'Wie hei\u00dft du?',
-        namePlaceholder: 'Dein Vorname...', surnamePlaceholder: 'Dein Nachname...',
+        namePlaceholder: 'Dein Vorname...',
         continueBtn: 'Weiter \u2192',
         stepDobLabel: 'Und dein Geburtsdatum?',
         dobPlaceholder: 'z.B. 24/06/1990', dobHint: 'Format: TT/MM/JJJJ',
@@ -1036,7 +1052,7 @@
         cookieMore: 'Mehr erfahren', cookieAccept: 'Akzeptieren', cookieRefuse: 'Ablehnen',
         errorConnect: 'Ups, ich kann mich gerade nicht verbinden. Versuch es gleich nochmal! \uD83D\uDCAB',
         errorRate: 'Zu viele Nachrichten. Bitte warte eine Minute.',
-        introMsg: 'Hallo, ich bin {fullName}, geboren am {dob}. Ich m\u00f6chte mehr \u00fcber {interest} erfahren.',
+        introMsg: 'Hallo, ich hei\u00dfe {name}, geboren am {dob}. Ich m\u00f6chte mehr \u00fcber {interest} erfahren.',
         dobLabelPersonal: '{name}, wann bist du geboren?',
         iChemin: 'Lebensweg und Lebensmission', iAmour: 'Liebeskompatibilit\u00e4t',
         iCarriere: 'Karriere und beruflicher Erfolg', iPrevisions: 'pers\u00f6nliches Jahr und Prognosen',
@@ -1048,7 +1064,7 @@
         welcomeTitle: 'Benvenuto/a, sono <span>Nuta</span> \u2728',
         welcomeText: 'Prima di rivelare i tuoi segreti numerologici, ho bisogno di conoscerti un po\'...',
         stepNameLabel: 'Come ti chiami?',
-        namePlaceholder: 'Il tuo nome...', surnamePlaceholder: 'Il tuo cognome...',
+        namePlaceholder: 'Il tuo nome...',
         continueBtn: 'Continua \u2192',
         stepDobLabel: 'E la tua data di nascita?',
         dobPlaceholder: 'es: 24/06/1990', dobHint: 'Formato: GG/MM/AAAA',
@@ -1062,7 +1078,7 @@
         cookieMore: 'Scopri di pi\u00f9', cookieAccept: 'Accetta', cookieRefuse: 'Rifiuta',
         errorConnect: 'Ops, non riesco a connettermi ora. Riprova tra un momento! \uD83D\uDCAB',
         errorRate: 'Troppi messaggi inviati. Attendi un minuto.',
-        introMsg: 'Ciao, sono {fullName}, sono nato/a il {dob}. Vorrei sapere di pi\u00f9 su {interest}.',
+        introMsg: 'Ciao, mi chiamo {name}, sono nato/a il {dob}. Vorrei sapere di pi\u00f9 su {interest}.',
         dobLabelPersonal: '{name}, qual \u00e8 la tua data di nascita?',
         iChemin: 'percorso di vita e missione', iAmour: 'compatibilit\u00e0 amorosa',
         iCarriere: 'carriera e successo professionale', iPrevisions: 'anno personale e previsioni',
@@ -1099,7 +1115,6 @@
       // Step 1
       document.querySelector('#step-name .onboarding-label').textContent = t('stepNameLabel');
       document.getElementById('onboard-name').placeholder = t('namePlaceholder');
-      document.getElementById('onboard-surname').placeholder = t('surnamePlaceholder');
       document.getElementById('btn-step-name').textContent = t('continueBtn');
       // Step 2
       document.getElementById('dob-label').textContent = t('stepDobLabel');
@@ -1344,10 +1359,9 @@
     }
 
     // ── Onboarding ──
-    var onboardData = { name: '', surname: '', dob: '', interest: '' };
+    var onboardData = { name: '', dob: '', interest: '' };
 
     var nameInput = document.getElementById('onboard-name');
-    var surnameInput = document.getElementById('onboard-surname');
     var dobInput = document.getElementById('onboard-dob');
     var btnStepName = document.getElementById('btn-step-name');
     var btnStepDob = document.getElementById('btn-step-dob');
@@ -1399,7 +1413,6 @@
       document.getElementById('step-dob').classList.add('hidden');
       document.getElementById('step-interest').classList.add('hidden');
       nameInput.value = '';
-      surnameInput.value = '';
       dobInput.value = '';
       newConvBtn.classList.remove('visible');
       returningUser = false;
@@ -1431,7 +1444,6 @@
       var name = nameInput.value.trim();
       if (!name) { nameInput.focus(); return; }
       onboardData.name = name;
-      onboardData.surname = surnameInput.value.trim();
       document.getElementById('step-name').classList.add('hidden');
       document.getElementById('step-dob').classList.remove('hidden');
       document.getElementById('dob-label').textContent = t('dobLabelPersonal').replace('{name}', name);
@@ -1439,10 +1451,6 @@
     });
 
     nameInput.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') { surnameInput.focus(); }
-    });
-
-    surnameInput.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') btnStepName.click();
     });
 
@@ -1510,10 +1518,8 @@
       newConvBtn.classList.add('visible');
       // Mark as onboarded for returning visits
       try { localStorage.setItem('nuta_onboarded', 'true'); } catch(e) {}
-      // Build intro message with full name
-      var fullName = onboardData.name;
-      if (onboardData.surname) fullName += ' ' + onboardData.surname;
-      var introMsg = t('introMsg').replace('{fullName}', fullName).replace('{dob}', onboardData.dob).replace('{interest}', onboardData.interest);
+      // Build intro message with name only (surname asked later by chatbot)
+      var introMsg = t('introMsg').replace('{name}', onboardData.name).replace('{dob}', onboardData.dob).replace('{interest}', onboardData.interest);
       input.value = introMsg;
       sendMessage();
     }
