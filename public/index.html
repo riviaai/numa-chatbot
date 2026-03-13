@@ -157,6 +157,34 @@
 
     .lang-btn:hover { background: rgba(255,255,255,0.25); }
 
+    .text-size-btn {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 8px;
+      padding: 2px 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.9);
+      cursor: pointer;
+      transition: all 0.2s;
+      line-height: 1;
+    }
+
+    .text-size-btn:hover { background: rgba(255,255,255,0.25); }
+
+    body.text-lg .message-bubble { font-size: 1.05rem !important; line-height: 1.7 !important; }
+    body.text-lg .onboarding-label { font-size: 1.15rem !important; }
+    body.text-lg .onboarding-input { font-size: 1.1rem !important; }
+    body.text-lg .interest-btn { font-size: 0.92rem !important; }
+    body.text-lg #message-input { font-size: 1rem !important; }
+
+    body.text-xl .message-bubble { font-size: 1.2rem !important; line-height: 1.75 !important; }
+    body.text-xl .onboarding-label { font-size: 1.3rem !important; }
+    body.text-xl .onboarding-input { font-size: 1.2rem !important; }
+    body.text-xl .interest-btn { font-size: 1.05rem !important; }
+    body.text-xl #message-input { font-size: 1.15rem !important; }
+
     .lang-dropdown {
       display: none;
       position: absolute;
@@ -700,7 +728,30 @@
     @media (max-width: 380px) {
       .suggestion-btn { font-size: 0.7rem; padding: 5px 10px; }
       .welcome h2 { font-size: 1.05rem; }
-      .message { max-width: 88%; }
+      .message { max-width: 92%; }
+      .header-status span { display: none; }
+      .header-right { gap: 4px; }
+      .interest-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Tablet / larger screens */
+    @media (min-width: 768px) {
+      .chat-area { padding: 24px 40px; }
+      .message { max-width: 70%; }
+      .welcome { padding: 48px 20px 24px; }
+      .welcome-mascot { width: 100px; height: 100px; }
+      .welcome h2 { font-size: 1.5rem; }
+      .welcome p { font-size: 0.95rem; max-width: 460px; }
+      .input-area { padding: 14px 24px; }
+      .onboarding-input { max-width: 320px; }
+      .interest-grid { max-width: 400px; }
+    }
+
+    /* Desktop */
+    @media (min-width: 1024px) {
+      .chat-area { padding: 28px 80px; max-width: 900px; margin: 0 auto; width: 100%; }
+      .message { max-width: 65%; }
+      .input-area { max-width: 900px; margin: 0 auto; width: 100%; padding: 16px 80px; }
     }
   </style>
 </head>
@@ -744,6 +795,7 @@
         <div class="status-dot"></div>
         <span id="status-text">En ligne</span>
       </div>
+      <button class="text-size-btn" id="text-size-btn" title="Taille du texte">A+</button>
       <div class="lang-switcher">
         <button class="lang-btn" id="lang-btn">FR</button>
         <div class="lang-dropdown" id="lang-dropdown">
@@ -751,6 +803,7 @@
           <button class="lang-option" data-lang="en">English</button>
           <button class="lang-option" data-lang="es">Espa&ntilde;ol</button>
           <button class="lang-option" data-lang="de">Deutsch</button>
+          <button class="lang-option" data-lang="it">Italiano</button>
         </div>
       </div>
     </div>
@@ -784,7 +837,7 @@
         <text x="18" y="43" text-anchor="middle" font-size="7" font-weight="bold" fill="#6C47FF">7</text>
       </svg>
       <h2>Bienvenue, je suis <span>Numa</span> &#x2728;</h2>
-      <p>Avant de r&eacute;v&eacute;ler tes secrets num&eacute;rologiques, j'ai besoin de te conna&icirc;tre un peu...</p>
+      <p id="welcome-text">Avant de r&eacute;v&eacute;ler tes secrets num&eacute;rologiques, j'ai besoin de te conna&icirc;tre un peu...</p>
 
       <!-- Onboarding step 1: Prénom + Nom -->
       <div class="onboarding-step" id="step-name">
@@ -941,6 +994,30 @@
         dobLabelPersonal: '{name}, wann bist du geboren?',
         iChemin: 'Lebensweg und Lebensmission', iAmour: 'Liebeskompatibilit\u00e4t',
         iCarriere: 'Karriere und beruflicher Erfolg', iPrevisions: 'pers\u00f6nliches Jahr und Prognosen'
+      },
+      it: {
+        code: 'IT', subtitle: 'La tua guida di numerologia', status: 'Online',
+        welcomeTitle: 'Benvenuto/a, sono <span>Numa</span> \u2728',
+        welcomeText: 'Prima di rivelare i tuoi segreti numerologici, ho bisogno di conoscerti un po\'...',
+        stepNameLabel: 'Come ti chiami?',
+        namePlaceholder: 'Il tuo nome...', surnamePlaceholder: 'Il tuo cognome...',
+        continueBtn: 'Continua \u2192',
+        stepDobLabel: 'E la tua data di nascita?',
+        dobPlaceholder: 'es: 24/06/1990', dobHint: 'Formato: GG/MM/AAAA',
+        dobError: 'Inserisci una data valida (es: 24/06/1990)',
+        stepInterestLabel: 'Cosa ti interessa di pi\u00f9?',
+        interestSuper: 'Fantastico {name}! Cosa ti interessa?',
+        interest1: '\uD83C\uDF1F Il mio percorso di vita', interest2: '\u2764\uFE0F Amore e compatibilit\u00e0',
+        interest3: '\uD83D\uDCBC Carriera e denaro', interest4: '\uD83D\uDD2E Previsioni 2026',
+        inputPlaceholder: 'La tua domanda per Numa...',
+        cookieText: 'Questo sito utilizza solo cookie strettamente necessari. Nessun cookie di tracciamento.',
+        cookieMore: 'Scopri di pi\u00f9', cookieAccept: 'Accetta', cookieRefuse: 'Rifiuta',
+        errorConnect: 'Ops, non riesco a connettermi ora. Riprova tra un momento! \uD83D\uDCAB',
+        errorRate: 'Troppi messaggi inviati. Attendi un minuto.',
+        introMsg: 'Ciao, sono {fullName}, sono nato/a il {dob}. Vorrei sapere di pi\u00f9 su {interest}.',
+        dobLabelPersonal: '{name}, qual \u00e8 la tua data di nascita?',
+        iChemin: 'percorso di vita e missione', iAmour: 'compatibilit\u00e0 amorosa',
+        iCarriere: 'carriera e successo professionale', iPrevisions: 'anno personale e previsioni'
       }
     };
 
@@ -954,6 +1031,7 @@
       var nav = (navigator.language || navigator.userLanguage || 'fr').toLowerCase();
       if (nav.startsWith('es')) currentLang = 'es';
       else if (nav.startsWith('de')) currentLang = 'de';
+      else if (nav.startsWith('it')) currentLang = 'it';
       else if (nav.startsWith('en')) currentLang = 'en';
       else currentLang = 'fr';
     })();
@@ -967,7 +1045,7 @@
       document.getElementById('status-text').textContent = t('status');
       // Welcome
       document.querySelector('.welcome h2').innerHTML = t('welcomeTitle');
-      document.querySelector('.welcome p').textContent = t('welcomeText');
+      document.getElementById('welcome-text').textContent = t('welcomeText');
       // Step 1
       document.querySelector('#step-name .onboarding-label').textContent = t('stepNameLabel');
       document.getElementById('onboard-name').placeholder = t('namePlaceholder');
@@ -1263,7 +1341,7 @@
       dobInput.value = v;
       // Clear error state on typing
       dobInput.classList.remove('input-error');
-      document.getElementById('dob-hint').textContent = 'Format : JJ/MM/AAAA';
+      document.getElementById('dob-hint').textContent = t('dobHint');
       document.getElementById('dob-hint').classList.remove('error');
     });
 
@@ -1353,6 +1431,28 @@
     // Close dropdown on outside click
     document.addEventListener('click', function() {
       document.getElementById('lang-dropdown').classList.remove('open');
+    });
+
+    // ── Text size toggle ──
+    var textSizes = ['', 'text-lg', 'text-xl'];
+    var textSizeLabels = ['A+', 'A++', 'A'];
+    var textSizeIdx = 0;
+    try {
+      var storedSize = localStorage.getItem('numa_text_size');
+      if (storedSize) {
+        textSizeIdx = textSizes.indexOf(storedSize);
+        if (textSizeIdx < 0) textSizeIdx = 0;
+        if (textSizes[textSizeIdx]) document.body.classList.add(textSizes[textSizeIdx]);
+      }
+    } catch(e) {}
+    document.getElementById('text-size-btn').textContent = textSizeLabels[textSizeIdx];
+
+    document.getElementById('text-size-btn').addEventListener('click', function() {
+      if (textSizes[textSizeIdx]) document.body.classList.remove(textSizes[textSizeIdx]);
+      textSizeIdx = (textSizeIdx + 1) % textSizes.length;
+      if (textSizes[textSizeIdx]) document.body.classList.add(textSizes[textSizeIdx]);
+      document.getElementById('text-size-btn').textContent = textSizeLabels[textSizeIdx];
+      try { localStorage.setItem('numa_text_size', textSizes[textSizeIdx]); } catch(e) {}
     });
 
     // Apply language on load

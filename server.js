@@ -156,7 +156,8 @@ const LANG_INSTRUCTIONS = {
   fr: "Tu reponds TOUJOURS en francais. Tutoie naturellement.",
   en: "You ALWAYS respond in English. Be warm and friendly, use 'you' naturally.",
   es: "SIEMPRE respondes en espanol. Tutea naturalmente, se calido/a y cercano/a.",
-  de: "Du antwortest IMMER auf Deutsch. Duze die Person naturlich, sei warm und freundlich."
+  de: "Du antwortest IMMER auf Deutsch. Duze die Person naturlich, sei warm und freundlich.",
+  it: "Rispondi SEMPRE in italiano. Dai del tu naturalmente, sii caloroso/a e amichevole."
 };
 
 // Dynamic system prompt with current date
