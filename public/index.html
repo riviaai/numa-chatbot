@@ -192,6 +192,100 @@
       margin: 0 auto;
     }
 
+    /* ── Onboarding ── */
+    .onboarding-step {
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .onboarding-step.hidden { display: none; }
+
+    .onboarding-label {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--gray-800);
+    }
+
+    .onboarding-input {
+      width: 100%;
+      max-width: 280px;
+      padding: 12px 16px;
+      border: 2px solid var(--gray-200);
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.2s;
+      color: var(--gray-800);
+      background: var(--white);
+    }
+
+    .onboarding-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(108,71,255,0.1);
+    }
+
+    .onboarding-btn {
+      padding: 12px 32px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: var(--white);
+      border: none;
+      border-radius: 25px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(108,71,255,0.3);
+    }
+
+    .onboarding-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(108,71,255,0.4);
+    }
+
+    .onboarding-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .interest-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      width: 100%;
+      max-width: 340px;
+    }
+
+    .interest-btn {
+      padding: 14px 10px;
+      background: var(--white);
+      border: 2px solid var(--gray-200);
+      border-radius: 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--gray-700);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    .interest-btn:hover {
+      border-color: var(--primary);
+      background: var(--accent-purple);
+      color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
     /* ── Suggestions ── */
     .suggestions {
       display: flex;
@@ -585,15 +679,32 @@
         <circle cx="18" cy="40" r="5" fill="#E8DEFF" stroke="#6C47FF" stroke-width="1"/>
         <text x="18" y="43" text-anchor="middle" font-size="7" font-weight="bold" fill="#6C47FF">7</text>
       </svg>
-      <h2>Bienvenue, je suis <span>Numa</span></h2>
-      <p>Votre guide en num&eacute;rologie. Posez-moi une question, donnez-moi votre date de naissance ou votre pr&eacute;nom, et je vous r&eacute;v&eacute;lerai les secrets des nombres.</p>
-      <div class="suggestions">
-        <button class="suggestion-btn">Quel est mon chemin de vie ?</button>
-        <button class="suggestion-btn">Que signifie le nombre 7 ?</button>
-        <button class="suggestion-btn">Num&eacute;rologie chinoise</button>
-        <button class="suggestion-btn">Mon ann&eacute;e personnelle 2026</button>
-        <button class="suggestion-btn">Num&eacute;rologie de mon pr&eacute;nom</button>
-        <button class="suggestion-btn">Nombres ma&icirc;tres</button>
+      <h2>Bienvenue, je suis <span>Numa</span> &#x2728;</h2>
+      <p>Avant de r&eacute;v&eacute;ler tes secrets num&eacute;rologiques, j'ai besoin de te conna&icirc;tre un peu...</p>
+
+      <!-- Onboarding step 1: Prénom -->
+      <div class="onboarding-step" id="step-name">
+        <label class="onboarding-label">Comment tu t'appelles ?</label>
+        <input type="text" id="onboard-name" class="onboarding-input" placeholder="Ton pr&eacute;nom..." maxlength="50" autocomplete="given-name">
+        <button class="onboarding-btn" id="btn-step-name">Continuer &#x2192;</button>
+      </div>
+
+      <!-- Onboarding step 2: Date de naissance -->
+      <div class="onboarding-step hidden" id="step-dob">
+        <label class="onboarding-label" id="dob-label">Et ta date de naissance ?</label>
+        <input type="date" id="onboard-dob" class="onboarding-input" max="2010-01-01">
+        <button class="onboarding-btn" id="btn-step-dob">Continuer &#x2192;</button>
+      </div>
+
+      <!-- Onboarding step 3: Centre d'intérêt -->
+      <div class="onboarding-step hidden" id="step-interest">
+        <label class="onboarding-label" id="interest-label">Qu'est-ce qui t'int&eacute;resse le plus ?</label>
+        <div class="interest-grid">
+          <button class="interest-btn" data-interest="chemin de vie et mission de vie">&#x1F31F; Mon chemin de vie</button>
+          <button class="interest-btn" data-interest="compatibilité amoureuse">&#x2764;&#xFE0F; Amour &amp; compatibilit&eacute;</button>
+          <button class="interest-btn" data-interest="carrière et réussite professionnelle">&#x1F4BC; Carri&egrave;re &amp; argent</button>
+          <button class="interest-btn" data-interest="année personnelle et prévisions">&#x1F52E; Pr&eacute;visions 2026</button>
+        </div>
       </div>
     </div>
   </main>
@@ -840,6 +951,58 @@
       input.focus();
     }
 
+    // ── Onboarding ──
+    var onboardData = { name: '', dob: '', interest: '' };
+
+    var nameInput = document.getElementById('onboard-name');
+    var dobInput = document.getElementById('onboard-dob');
+    var btnStepName = document.getElementById('btn-step-name');
+    var btnStepDob = document.getElementById('btn-step-dob');
+
+    btnStepName.addEventListener('click', function() {
+      var name = nameInput.value.trim();
+      if (!name) { nameInput.focus(); return; }
+      onboardData.name = name;
+      document.getElementById('step-name').classList.add('hidden');
+      document.getElementById('step-dob').classList.remove('hidden');
+      document.getElementById('dob-label').textContent = name + ', quelle est ta date de naissance ?';
+      dobInput.focus();
+    });
+
+    nameInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') btnStepName.click();
+    });
+
+    btnStepDob.addEventListener('click', function() {
+      if (!dobInput.value) { dobInput.focus(); return; }
+      onboardData.dob = dobInput.value;
+      document.getElementById('step-dob').classList.add('hidden');
+      document.getElementById('step-interest').classList.remove('hidden');
+      document.getElementById('interest-label').textContent = 'Super ' + onboardData.name + ' ! Qu\u2019est-ce qui t\u2019int\u00e9resse ?';
+    });
+
+    dobInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') btnStepDob.click();
+    });
+
+    document.querySelectorAll('.interest-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        onboardData.interest = btn.getAttribute('data-interest');
+        startChat();
+      });
+    });
+
+    function startChat() {
+      welcome.style.display = 'none';
+      // Format date
+      var parts = onboardData.dob.split('-');
+      var dateFormatted = parts[2] + '/' + parts[1] + '/' + parts[0];
+      // Build intro message
+      var introMsg = 'Salut, je suis ' + onboardData.name + ', je suis n\u00e9(e) le ' + dateFormatted + '. Je voudrais en savoir plus sur ' + onboardData.interest + '.';
+      input.value = introMsg;
+      sendMessage();
+    }
+
     // ── Event listeners (no inline onclick for CSP compliance) ──
     sendBtn.addEventListener('click', function() { sendMessage(); });
 
@@ -850,18 +1013,11 @@
       }
     });
 
-    document.querySelectorAll('.suggestion-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        input.value = btn.textContent;
-        sendMessage();
-      });
-    });
-
     document.getElementById('cookie-accept').addEventListener('click', function() { acceptCookies(); });
     document.getElementById('cookie-refuse').addEventListener('click', function() { refuseCookies(); });
 
-    // Focus input on load
-    input.focus();
+    // Focus name input on load
+    nameInput.focus();
   </script>
 </body>
 </html>
