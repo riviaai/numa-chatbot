@@ -422,19 +422,15 @@
 
     /* ── Cookie banner ── */
     .cookie-banner {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
       background: var(--white);
       border-top: 1px solid var(--gray-200);
-      padding: 16px 20px;
+      padding: 12px 20px;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: center;
       gap: 12px;
-      z-index: 1000;
+      flex-shrink: 0;
       box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
       animation: slideUp 0.3s ease;
     }
@@ -599,6 +595,13 @@
     </div>
   </main>
 
+  <!-- Cookie banner (in flow, above input) -->
+  <div class="cookie-banner hidden" id="cookie-banner" role="dialog" aria-label="Consentement aux cookies">
+    <p>Ce site utilise uniquement des cookies strictement n&eacute;cessaires. Aucun cookie de suivi. <a href="/privacy.html">En savoir plus</a></p>
+    <button class="cookie-btn cookie-btn-accept" onclick="acceptCookies()">Accepter</button>
+    <button class="cookie-btn cookie-btn-refuse" onclick="refuseCookies()">Refuser</button>
+  </div>
+
   <!-- Input -->
   <div class="input-area">
     <div class="input-wrapper">
@@ -617,12 +620,6 @@
     <a href="/legal.html">Mentions l&eacute;gales</a><span class="sep">|</span><a href="/privacy.html">Confidentialit&eacute;</a><span class="sep">|</span><a href="/terms.html">CGU/CGV</a>
   </footer>
 
-  <!-- Cookie banner -->
-  <div class="cookie-banner hidden" id="cookie-banner" role="dialog" aria-label="Consentement aux cookies">
-    <p>Ce site utilise uniquement des cookies strictement n&eacute;cessaires au fonctionnement du service. Aucun cookie de suivi n'est utilis&eacute;. <a href="/privacy.html">En savoir plus</a></p>
-    <button class="cookie-btn cookie-btn-accept" onclick="acceptCookies()">Accepter</button>
-    <button class="cookie-btn cookie-btn-refuse" onclick="refuseCookies()">Refuser</button>
-  </div>
 
   <script>
     'use strict';
