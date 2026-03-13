@@ -117,11 +117,17 @@
       font-weight: 500;
     }
 
-    .header-status {
+    .header-right {
       position: absolute;
-      right: 20px;
+      right: 16px;
       top: 50%;
       transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-status {
       display: flex;
       align-items: center;
       gap: 6px;
@@ -129,6 +135,60 @@
       color: var(--accent-gold);
       font-weight: 600;
     }
+
+    .lang-switcher {
+      position: relative;
+    }
+
+    .lang-btn {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 8px;
+      padding: 3px 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.9);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .lang-btn:hover { background: rgba(255,255,255,0.25); }
+
+    .lang-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: var(--white);
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      overflow: hidden;
+      z-index: 100;
+      min-width: 120px;
+    }
+
+    .lang-dropdown.open { display: block; }
+
+    .lang-option {
+      display: block;
+      width: 100%;
+      padding: 8px 14px;
+      border: none;
+      background: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--gray-700);
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+
+    .lang-option:hover { background: var(--accent-purple); color: var(--primary); }
+    .lang-option.active { color: var(--primary); font-weight: 700; }
 
     .status-dot {
       width: 7px;
@@ -617,7 +677,9 @@
       .mascot-container { width: 40px; height: 40px; }
       .mascot { width: 40px; height: 40px; }
       .header-text h1 { font-size: 1.05rem; }
-      .header-status { font-size: 0.65rem; right: 14px; }
+      .header-right { right: 10px; gap: 6px; }
+      .header-status { font-size: 0.6rem; }
+      .lang-btn { font-size: 0.6rem; padding: 2px 6px; }
       .message { max-width: 88%; }
       .message-bubble { font-size: 0.84rem; padding: 10px 14px; }
       .chat-area { padding: 12px; gap: 10px; }
@@ -677,9 +739,20 @@
       <h1><span>Numa</span></h1>
       <p>Ta guide en num&eacute;rologie</p>
     </div>
-    <div class="header-status" aria-live="polite">
-      <div class="status-dot"></div>
-      <span>En ligne</span>
+    <div class="header-right">
+      <div class="header-status" aria-live="polite">
+        <div class="status-dot"></div>
+        <span id="status-text">En ligne</span>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn" id="lang-btn">FR</button>
+        <div class="lang-dropdown" id="lang-dropdown">
+          <button class="lang-option" data-lang="fr">Fran&ccedil;ais</button>
+          <button class="lang-option" data-lang="en">English</button>
+          <button class="lang-option" data-lang="es">Espa&ntilde;ol</button>
+          <button class="lang-option" data-lang="de">Deutsch</button>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -713,10 +786,11 @@
       <h2>Bienvenue, je suis <span>Numa</span> &#x2728;</h2>
       <p>Avant de r&eacute;v&eacute;ler tes secrets num&eacute;rologiques, j'ai besoin de te conna&icirc;tre un peu...</p>
 
-      <!-- Onboarding step 1: Prénom -->
+      <!-- Onboarding step 1: Prénom + Nom -->
       <div class="onboarding-step" id="step-name">
         <label class="onboarding-label">Comment tu t'appelles ?</label>
         <input type="text" id="onboard-name" class="onboarding-input" placeholder="Ton pr&eacute;nom..." maxlength="50" autocomplete="given-name">
+        <input type="text" id="onboard-surname" class="onboarding-input" placeholder="Ton nom de famille..." maxlength="50" autocomplete="family-name">
         <button class="onboarding-btn" id="btn-step-name">Continuer &#x2192;</button>
       </div>
 
@@ -770,12 +844,170 @@
   <script>
     'use strict';
 
+    // ── i18n ──
+    var LANGS = {
+      fr: {
+        code: 'FR', subtitle: 'Ta guide en num\u00e9rologie', status: 'En ligne',
+        welcomeTitle: 'Bienvenue, je suis <span>Numa</span> \u2728',
+        welcomeText: 'Avant de r\u00e9v\u00e9ler tes secrets num\u00e9rologiques, j\'ai besoin de te conna\u00eetre un peu...',
+        stepNameLabel: 'Comment tu t\'appelles ?',
+        namePlaceholder: 'Ton pr\u00e9nom...', surnamePlaceholder: 'Ton nom de famille...',
+        continueBtn: 'Continuer \u2192',
+        stepDobLabel: 'Et ta date de naissance ?',
+        dobPlaceholder: 'ex : 24/06/1990', dobHint: 'Format : JJ/MM/AAAA',
+        dobError: 'Entre une date valide (ex : 24/06/1990)',
+        stepInterestLabel: 'Qu\'est-ce qui t\'int\u00e9resse le plus ?',
+        interestSuper: 'Super {name} ! Qu\u2019est-ce qui t\u2019int\u00e9resse ?',
+        interest1: '\uD83C\uDF1F Mon chemin de vie', interest2: '\u2764\uFE0F Amour & compatibilit\u00e9',
+        interest3: '\uD83D\uDCBC Carri\u00e8re & argent', interest4: '\uD83D\uDD2E Pr\u00e9visions 2026',
+        inputPlaceholder: 'Ta question \u00e0 Numa...',
+        cookieText: 'Ce site utilise uniquement des cookies strictement n\u00e9cessaires. Aucun cookie de suivi.',
+        cookieMore: 'En savoir plus', cookieAccept: 'Accepter', cookieRefuse: 'Refuser',
+        errorConnect: 'Oups, je n\'arrive pas \u00e0 me connecter pour le moment. R\u00e9essaie dans un instant ! \uD83D\uDCAB',
+        errorRate: 'Trop de messages envoy\u00e9s. Veuillez patienter une minute.',
+        introMsg: 'Salut, je suis {fullName}, je suis n\u00e9(e) le {dob}. Je voudrais en savoir plus sur {interest}.',
+        dobLabelPersonal: '{name}, quelle est ta date de naissance ?',
+        iChemin: 'chemin de vie et mission de vie', iAmour: 'compatibilit\u00e9 amoureuse',
+        iCarriere: 'carri\u00e8re et r\u00e9ussite professionnelle', iPrevisions: 'ann\u00e9e personnelle et pr\u00e9visions'
+      },
+      en: {
+        code: 'EN', subtitle: 'Your numerology guide', status: 'Online',
+        welcomeTitle: 'Welcome, I\'m <span>Numa</span> \u2728',
+        welcomeText: 'Before revealing your numerological secrets, I need to get to know you a little...',
+        stepNameLabel: 'What\'s your name?',
+        namePlaceholder: 'Your first name...', surnamePlaceholder: 'Your last name...',
+        continueBtn: 'Continue \u2192',
+        stepDobLabel: 'And your date of birth?',
+        dobPlaceholder: 'e.g. 24/06/1990', dobHint: 'Format: DD/MM/YYYY',
+        dobError: 'Enter a valid date (e.g. 24/06/1990)',
+        stepInterestLabel: 'What interests you most?',
+        interestSuper: 'Great {name}! What interests you?',
+        interest1: '\uD83C\uDF1F My life path', interest2: '\u2764\uFE0F Love & compatibility',
+        interest3: '\uD83D\uDCBC Career & money', interest4: '\uD83D\uDD2E 2026 Forecast',
+        inputPlaceholder: 'Your question for Numa...',
+        cookieText: 'This site only uses strictly necessary cookies. No tracking cookies.',
+        cookieMore: 'Learn more', cookieAccept: 'Accept', cookieRefuse: 'Decline',
+        errorConnect: 'Oops, I can\'t connect right now. Try again in a moment! \uD83D\uDCAB',
+        errorRate: 'Too many messages sent. Please wait a minute.',
+        introMsg: 'Hi, I\'m {fullName}, I was born on {dob}. I\'d like to know more about {interest}.',
+        dobLabelPersonal: '{name}, what\'s your date of birth?',
+        iChemin: 'life path and life mission', iAmour: 'love compatibility',
+        iCarriere: 'career and professional success', iPrevisions: 'personal year and forecasts'
+      },
+      es: {
+        code: 'ES', subtitle: 'Tu gu\u00eda de numerolog\u00eda', status: 'En l\u00ednea',
+        welcomeTitle: 'Bienvenido/a, soy <span>Numa</span> \u2728',
+        welcomeText: 'Antes de revelar tus secretos numerol\u00f3gicos, necesito conocerte un poco...',
+        stepNameLabel: '\u00bfC\u00f3mo te llamas?',
+        namePlaceholder: 'Tu nombre...', surnamePlaceholder: 'Tu apellido...',
+        continueBtn: 'Continuar \u2192',
+        stepDobLabel: '\u00bfY tu fecha de nacimiento?',
+        dobPlaceholder: 'ej: 24/06/1990', dobHint: 'Formato: DD/MM/AAAA',
+        dobError: 'Introduce una fecha v\u00e1lida (ej: 24/06/1990)',
+        stepInterestLabel: '\u00bfQu\u00e9 te interesa m\u00e1s?',
+        interestSuper: '\u00a1Genial {name}! \u00bfQu\u00e9 te interesa?',
+        interest1: '\uD83C\uDF1F Mi camino de vida', interest2: '\u2764\uFE0F Amor y compatibilidad',
+        interest3: '\uD83D\uDCBC Carrera y dinero', interest4: '\uD83D\uDD2E Predicciones 2026',
+        inputPlaceholder: 'Tu pregunta para Numa...',
+        cookieText: 'Este sitio solo usa cookies estrictamente necesarias. Sin cookies de rastreo.',
+        cookieMore: 'M\u00e1s info', cookieAccept: 'Aceptar', cookieRefuse: 'Rechazar',
+        errorConnect: '\u00a1Ups, no puedo conectarme ahora. Int\u00e9ntalo en un momento! \uD83D\uDCAB',
+        errorRate: 'Demasiados mensajes enviados. Espera un minuto.',
+        introMsg: 'Hola, soy {fullName}, nac\u00ed el {dob}. Me gustar\u00eda saber m\u00e1s sobre {interest}.',
+        dobLabelPersonal: '{name}, \u00bfcu\u00e1l es tu fecha de nacimiento?',
+        iChemin: 'camino de vida y misi\u00f3n', iAmour: 'compatibilidad amorosa',
+        iCarriere: 'carrera y \u00e9xito profesional', iPrevisions: 'a\u00f1o personal y predicciones'
+      },
+      de: {
+        code: 'DE', subtitle: 'Dein Numerologie-Guide', status: 'Online',
+        welcomeTitle: 'Willkommen, ich bin <span>Numa</span> \u2728',
+        welcomeText: 'Bevor ich deine numerologischen Geheimnisse enth\u00fclle, muss ich dich ein wenig kennenlernen...',
+        stepNameLabel: 'Wie hei\u00dft du?',
+        namePlaceholder: 'Dein Vorname...', surnamePlaceholder: 'Dein Nachname...',
+        continueBtn: 'Weiter \u2192',
+        stepDobLabel: 'Und dein Geburtsdatum?',
+        dobPlaceholder: 'z.B. 24/06/1990', dobHint: 'Format: TT/MM/JJJJ',
+        dobError: 'Gib ein g\u00fcltiges Datum ein (z.B. 24/06/1990)',
+        stepInterestLabel: 'Was interessiert dich am meisten?',
+        interestSuper: 'Super {name}! Was interessiert dich?',
+        interest1: '\uD83C\uDF1F Mein Lebensweg', interest2: '\u2764\uFE0F Liebe & Kompatibilit\u00e4t',
+        interest3: '\uD83D\uDCBC Karriere & Geld', interest4: '\uD83D\uDD2E Prognosen 2026',
+        inputPlaceholder: 'Deine Frage an Numa...',
+        cookieText: 'Diese Seite verwendet nur unbedingt notwendige Cookies. Keine Tracking-Cookies.',
+        cookieMore: 'Mehr erfahren', cookieAccept: 'Akzeptieren', cookieRefuse: 'Ablehnen',
+        errorConnect: 'Ups, ich kann mich gerade nicht verbinden. Versuch es gleich nochmal! \uD83D\uDCAB',
+        errorRate: 'Zu viele Nachrichten. Bitte warte eine Minute.',
+        introMsg: 'Hallo, ich bin {fullName}, geboren am {dob}. Ich m\u00f6chte mehr \u00fcber {interest} erfahren.',
+        dobLabelPersonal: '{name}, wann bist du geboren?',
+        iChemin: 'Lebensweg und Lebensmission', iAmour: 'Liebeskompatibilit\u00e4t',
+        iCarriere: 'Karriere und beruflicher Erfolg', iPrevisions: 'pers\u00f6nliches Jahr und Prognosen'
+      }
+    };
+
+    var currentLang = 'fr';
+
+    // Detect language from browser or stored preference
+    (function detectLang() {
+      var stored = null;
+      try { stored = localStorage.getItem('numa_lang'); } catch(e) {}
+      if (stored && LANGS[stored]) { currentLang = stored; return; }
+      var nav = (navigator.language || navigator.userLanguage || 'fr').toLowerCase();
+      if (nav.startsWith('es')) currentLang = 'es';
+      else if (nav.startsWith('de')) currentLang = 'de';
+      else if (nav.startsWith('en')) currentLang = 'en';
+      else currentLang = 'fr';
+    })();
+
+    function t(key) { return LANGS[currentLang][key] || LANGS.fr[key] || key; }
+
+    function applyLanguage() {
+      document.documentElement.lang = currentLang;
+      document.getElementById('lang-btn').textContent = t('code');
+      document.querySelector('.header-text p').textContent = t('subtitle');
+      document.getElementById('status-text').textContent = t('status');
+      // Welcome
+      document.querySelector('.welcome h2').innerHTML = t('welcomeTitle');
+      document.querySelector('.welcome p').textContent = t('welcomeText');
+      // Step 1
+      document.querySelector('#step-name .onboarding-label').textContent = t('stepNameLabel');
+      document.getElementById('onboard-name').placeholder = t('namePlaceholder');
+      document.getElementById('onboard-surname').placeholder = t('surnamePlaceholder');
+      document.getElementById('btn-step-name').textContent = t('continueBtn');
+      // Step 2
+      document.getElementById('dob-label').textContent = t('stepDobLabel');
+      document.getElementById('onboard-dob').placeholder = t('dobPlaceholder');
+      document.getElementById('dob-hint').textContent = t('dobHint');
+      document.getElementById('btn-step-dob').textContent = t('continueBtn');
+      // Step 3
+      document.getElementById('interest-label').textContent = t('stepInterestLabel');
+      var intBtns = document.querySelectorAll('.interest-btn');
+      if (intBtns[0]) intBtns[0].textContent = t('interest1');
+      if (intBtns[1]) intBtns[1].textContent = t('interest2');
+      if (intBtns[2]) intBtns[2].textContent = t('interest3');
+      if (intBtns[3]) intBtns[3].textContent = t('interest4');
+      // Input
+      document.getElementById('message-input').placeholder = t('inputPlaceholder');
+      // Cookie
+      var cookieP = document.querySelector('#cookie-banner p');
+      if (cookieP) cookieP.innerHTML = t('cookieText') + ' <a href="/privacy.html">' + t('cookieMore') + '</a>';
+      document.getElementById('cookie-accept').textContent = t('cookieAccept');
+      document.getElementById('cookie-refuse').textContent = t('cookieRefuse');
+      // Active option highlight
+      document.querySelectorAll('.lang-option').forEach(function(o) {
+        o.classList.toggle('active', o.getAttribute('data-lang') === currentLang);
+      });
+    }
+
     var chatArea = document.getElementById('chat-area');
     var input = document.getElementById('message-input');
     var sendBtn = document.getElementById('send-btn');
     var welcome = document.getElementById('welcome');
 
-    var sessionId = 'session_' + Math.random().toString(36).substring(2, 10);
+    // Persistent session: reuse sessionId for returning users
+    var storedSession = null;
+    try { storedSession = localStorage.getItem('numa_session_id'); } catch(e) {}
+    var sessionId = storedSession || 'session_' + Math.random().toString(36).substring(2, 10);
+    try { localStorage.setItem('numa_session_id', sessionId); } catch(e) {}
     var isWaiting = false;
 
     // ── Cookie consent ──
@@ -926,12 +1158,12 @@
         var res = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: text, sessionId: sessionId }),
+          body: JSON.stringify({ message: text, sessionId: sessionId, lang: currentLang }),
         });
 
         if (res.status === 429) {
           hideTyping();
-          addMessage("Trop de messages envoy\u00e9s. Veuillez patienter une minute.", 'bot');
+          addMessage(t('errorRate'), 'bot');
           isWaiting = false;
           sendBtn.disabled = false;
           input.focus();
@@ -975,7 +1207,7 @@
         bubble.removeAttribute('id');
       } catch (err) {
         hideTyping();
-        addMessage("Oups, je n'arrive pas \u00e0 me connecter pour le moment. R\u00e9essaie dans un instant ! \uD83D\uDCAB", 'bot');
+        addMessage(t('errorConnect'), 'bot');
       }
 
       isWaiting = false;
@@ -984,24 +1216,38 @@
     }
 
     // ── Onboarding ──
-    var onboardData = { name: '', dob: '', interest: '' };
+    var onboardData = { name: '', surname: '', dob: '', interest: '' };
 
     var nameInput = document.getElementById('onboard-name');
+    var surnameInput = document.getElementById('onboard-surname');
     var dobInput = document.getElementById('onboard-dob');
     var btnStepName = document.getElementById('btn-step-name');
     var btnStepDob = document.getElementById('btn-step-dob');
+
+    // Check if returning user
+    var returningUser = false;
+    try { returningUser = localStorage.getItem('numa_onboarded') === 'true'; } catch(e) {}
+    if (returningUser && storedSession) {
+      // Skip onboarding, go straight to chat
+      welcome.style.display = 'none';
+    }
 
     btnStepName.addEventListener('click', function() {
       var name = nameInput.value.trim();
       if (!name) { nameInput.focus(); return; }
       onboardData.name = name;
+      onboardData.surname = surnameInput.value.trim();
       document.getElementById('step-name').classList.add('hidden');
       document.getElementById('step-dob').classList.remove('hidden');
-      document.getElementById('dob-label').textContent = name + ', quelle est ta date de naissance ?';
+      document.getElementById('dob-label').textContent = t('dobLabelPersonal').replace('{name}', name);
       dobInput.focus();
     });
 
     nameInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { surnameInput.focus(); }
+    });
+
+    surnameInput.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') btnStepName.click();
     });
 
@@ -1039,7 +1285,7 @@
       if (!parsed) {
         dobInput.classList.add('input-error');
         var hint = document.getElementById('dob-hint');
-        hint.textContent = 'Entre une date valide (ex : 24/06/1990)';
+        hint.textContent = t('dobError');
         hint.classList.add('error');
         dobInput.focus();
         return;
@@ -1049,24 +1295,29 @@
       onboardData.dob = dd + '/' + mm + '/' + parsed.year;
       document.getElementById('step-dob').classList.add('hidden');
       document.getElementById('step-interest').classList.remove('hidden');
-      document.getElementById('interest-label').textContent = 'Super ' + onboardData.name + ' ! Qu\u2019est-ce qui t\u2019int\u00e9resse ?';
+      document.getElementById('interest-label').textContent = t('interestSuper').replace('{name}', onboardData.name);
     });
 
     dobInput.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') btnStepDob.click();
     });
 
-    document.querySelectorAll('.interest-btn').forEach(function(btn) {
+    var interestKeys = ['iChemin', 'iAmour', 'iCarriere', 'iPrevisions'];
+    document.querySelectorAll('.interest-btn').forEach(function(btn, idx) {
       btn.addEventListener('click', function() {
-        onboardData.interest = btn.getAttribute('data-interest');
+        onboardData.interest = t(interestKeys[idx]);
         startChat();
       });
     });
 
     function startChat() {
       welcome.style.display = 'none';
-      // Build intro message (dob already in DD/MM/YYYY format)
-      var introMsg = 'Salut, je suis ' + onboardData.name + ', je suis n\u00e9(e) le ' + onboardData.dob + '. Je voudrais en savoir plus sur ' + onboardData.interest + '.';
+      // Mark as onboarded for returning visits
+      try { localStorage.setItem('numa_onboarded', 'true'); } catch(e) {}
+      // Build intro message with full name
+      var fullName = onboardData.name;
+      if (onboardData.surname) fullName += ' ' + onboardData.surname;
+      var introMsg = t('introMsg').replace('{fullName}', fullName).replace('{dob}', onboardData.dob).replace('{interest}', onboardData.interest);
       input.value = introMsg;
       sendMessage();
     }
@@ -1084,8 +1335,31 @@
     document.getElementById('cookie-accept').addEventListener('click', function() { acceptCookies(); });
     document.getElementById('cookie-refuse').addEventListener('click', function() { refuseCookies(); });
 
-    // Focus name input on load
-    nameInput.focus();
+    // ── Language switcher ──
+    document.getElementById('lang-btn').addEventListener('click', function(e) {
+      e.stopPropagation();
+      document.getElementById('lang-dropdown').classList.toggle('open');
+    });
+
+    document.querySelectorAll('.lang-option').forEach(function(opt) {
+      opt.addEventListener('click', function() {
+        currentLang = opt.getAttribute('data-lang');
+        try { localStorage.setItem('numa_lang', currentLang); } catch(e) {}
+        applyLanguage();
+        document.getElementById('lang-dropdown').classList.remove('open');
+      });
+    });
+
+    // Close dropdown on outside click
+    document.addEventListener('click', function() {
+      document.getElementById('lang-dropdown').classList.remove('open');
+    });
+
+    // Apply language on load
+    applyLanguage();
+
+    // Focus name input on load (if not returning user)
+    if (!returningUser) nameInput.focus();
   </script>
 </body>
 </html>
