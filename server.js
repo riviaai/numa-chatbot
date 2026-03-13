@@ -113,10 +113,10 @@ try {
         conversationHistories.set(sid, session);
       }
     }
-    console.error(`[nyma] ${conversationHistories.size} sessions restaurees depuis le disque.`);
+    console.error(`[nuta] ${conversationHistories.size} sessions restaurees depuis le disque.`);
   }
 } catch (e) {
-  console.error("[nyma] Erreur chargement sessions:", e.message);
+  console.error("[nuta] Erreur chargement sessions:", e.message);
 }
 
 // Save sessions to disk
@@ -125,7 +125,7 @@ function saveSessions() {
     const obj = Object.fromEntries(conversationHistories);
     writeFileSync(SESSIONS_FILE, JSON.stringify(obj), "utf-8");
   } catch (e) {
-    console.error("[nyma] Erreur sauvegarde sessions:", e.message);
+    console.error("[nuta] Erreur sauvegarde sessions:", e.message);
   }
 }
 
@@ -143,7 +143,7 @@ setInterval(() => {
     }
   }
   if (cleaned > 0) {
-    console.error(`[nyma] ${cleaned} sessions expirees nettoyees.`);
+    console.error(`[nuta] ${cleaned} sessions expirees nettoyees.`);
     saveSessions();
   }
 }, SESSION_CLEANUP_INTERVAL);
@@ -170,7 +170,7 @@ function getSystemPrompt(lang) {
 
   return `CONTEXTE TEMPOREL CRUCIAL : Nous sommes le ${dateStr}. L'annee en cours est ${currentYear}. Tu DOIS utiliser ${currentYear} pour TOUS les calculs d'annee personnelle, mois personnel et jour personnel. Ne JAMAIS utiliser une annee anterieure.
 
-Tu es Nyma, un guide chaleureux et bienveillant, expert en numerologie internationale. Tu es un petit etre lumineux et mystique qui adore guider les gens dans la decouverte d'eux-memes a travers les nombres.
+Tu es Nuta, un guide chaleureux et bienveillant, expert en numerologie internationale. Tu es un petit etre lumineux et mystique qui adore guider les gens dans la decouverte d'eux-memes a travers les nombres.
 
 REGLE DE GENRE ABSOLUE :
 - Par defaut, tu es NEUTRE dans ton langage. Utilise des formulations epicenes
@@ -533,12 +533,12 @@ app.post("/api/chat", rateLimit, async (req, res) => {
       const errorMsg = isTimeout
         ? "Desole, la reponse a pris trop de temps. Reessaie dans un instant."
         : "Erreur de communication.";
-      console.error("[nyma] Erreur stream Anthropic:", error.message);
+      console.error("[nuta] Erreur stream Anthropic:", error.message);
       res.write(`data: ${JSON.stringify({ type: "error", error: errorMsg })}\n\n`);
       res.end();
     });
   } catch (error) {
-    console.error("[nyma] Erreur API Anthropic:", error.message);
+    console.error("[nuta] Erreur API Anthropic:", error.message);
 
     if (error.status === 429) {
       return res
@@ -551,7 +551,7 @@ app.post("/api/chat", rateLimit, async (req, res) => {
         .json({ error: "Erreur de configuration du service." });
     }
 
-    res.status(500).json({ error: "Erreur de communication avec Nyma." });
+    res.status(500).json({ error: "Erreur de communication avec Nuta." });
   }
 });
 
@@ -592,25 +592,25 @@ app.get("*", (req, res) => {
 
 // ── Global error handler ──
 app.use((err, req, res, _next) => {
-  console.error("[nyma] Erreur non geree:", err.message);
+  console.error("[nuta] Erreur non geree:", err.message);
   res.status(500).json({ error: "Erreur interne du serveur." });
 });
 
 // ── Graceful shutdown ──
 const PORT = process.env.PORT || 3456;
 const server = app.listen(PORT, () => {
-  console.error(`[nyma] Serveur demarre sur http://localhost:${PORT}`);
+  console.error(`[nuta] Serveur demarre sur http://localhost:${PORT}`);
 });
 
 function gracefulShutdown(signal) {
-  console.error(`[nyma] ${signal} recu, arret en cours...`);
+  console.error(`[nuta] ${signal} recu, arret en cours...`);
   saveSessions();
   server.close(() => {
-    console.error("[nyma] Serveur arrete proprement.");
+    console.error("[nuta] Serveur arrete proprement.");
     process.exit(0);
   });
   setTimeout(() => {
-    console.error("[nyma] Arret force apres timeout.");
+    console.error("[nuta] Arret force apres timeout.");
     process.exit(1);
   }, 10_000);
 }
@@ -618,8 +618,8 @@ function gracefulShutdown(signal) {
 process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 process.on("SIGINT", () => gracefulShutdown("SIGINT"));
 process.on("uncaughtException", (err) => {
-  console.error("[nyma] Exception non capturee:", err.message);
+  console.error("[nuta] Exception non capturee:", err.message);
 });
 process.on("unhandledRejection", (reason) => {
-  console.error("[nyma] Promise rejetee non geree:", reason);
+  console.error("[nuta] Promise rejetee non geree:", reason);
 });

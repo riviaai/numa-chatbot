@@ -1,10 +1,10 @@
 #!/bin/bash
 # ============================================================
-# Nyma (Numerologie Chatbot) Service Manager
+# Nuta (Numerologie Chatbot) Service Manager
 # Usage: ./service.sh {start|stop|restart|status|logs}
 # ============================================================
 
-SERVICE_NAME="com.nyma.service"
+SERVICE_NAME="com.nuta.service"
 PLIST="$HOME/Library/LaunchAgents/${SERVICE_NAME}.plist"
 PORT=3456
 APP_DIR="/Users/steven/Medium/numerologie-chatbot"
@@ -12,7 +12,7 @@ LOG_DIR="${APP_DIR}/logs"
 
 case "$1" in
   start)
-    echo "Starting Nyma service..."
+    echo "Starting Nuta service..."
     if launchctl list | grep -q "$SERVICE_NAME"; then
       echo "Service is already loaded. Checking if running..."
       PID=$(lsof -ti tcp:$PORT 2>/dev/null)
@@ -25,14 +25,14 @@ case "$1" in
     sleep 2
     PID=$(lsof -ti tcp:$PORT 2>/dev/null)
     if [ -n "$PID" ]; then
-      echo "Nyma started successfully on port $PORT (PID: $PID)"
+      echo "Nuta started successfully on port $PORT (PID: $PID)"
     else
       echo "Warning: Service loaded but port $PORT not yet responding. Check logs."
     fi
     ;;
 
   stop)
-    echo "Stopping Nyma service..."
+    echo "Stopping Nuta service..."
     launchctl unload "$PLIST" 2>/dev/null
     PID=$(lsof -ti tcp:$PORT 2>/dev/null)
     if [ -n "$PID" ]; then
@@ -45,7 +45,7 @@ case "$1" in
     ;;
 
   restart)
-    echo "Restarting Nyma service..."
+    echo "Restarting Nuta service..."
     "$0" stop
     sleep 2
     "$0" start
@@ -54,7 +54,7 @@ case "$1" in
   status)
     PID=$(lsof -ti tcp:$PORT 2>/dev/null)
     if [ -n "$PID" ]; then
-      echo "Nyma is RUNNING on port $PORT (PID: $PID)"
+      echo "Nuta is RUNNING on port $PORT (PID: $PID)"
       HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:$PORT/api/health" 2>/dev/null)
       if [ "$HTTP_CODE" = "200" ]; then
         echo "Health check: OK (HTTP $HTTP_CODE)"
@@ -62,7 +62,7 @@ case "$1" in
         echo "Health check: FAILED (HTTP $HTTP_CODE)"
       fi
     else
-      echo "Nyma is NOT running."
+      echo "Nuta is NOT running."
       if launchctl list | grep -q "$SERVICE_NAME"; then
         echo "LaunchAgent is loaded but process is not running."
       else
@@ -73,10 +73,10 @@ case "$1" in
 
   logs)
     echo "=== Recent stdout ==="
-    tail -50 "${LOG_DIR}/nyma-stdout.log" 2>/dev/null || echo "(no stdout log)"
+    tail -50 "${LOG_DIR}/nuta-stdout.log" 2>/dev/null || echo "(no stdout log)"
     echo ""
     echo "=== Recent stderr ==="
-    tail -50 "${LOG_DIR}/nyma-stderr.log" 2>/dev/null || echo "(no stderr log)"
+    tail -50 "${LOG_DIR}/nuta-stderr.log" 2>/dev/null || echo "(no stderr log)"
     ;;
 
   *)
