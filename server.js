@@ -642,7 +642,7 @@ app.post("/api/chat", rateLimit, async (req, res) => {
     const controller = new AbortController();
     const apiTimeout = setTimeout(() => {
       controller.abort();
-    }, 30_000);
+    }, 45_000);
 
     const stream = anthropic.messages.stream({
       model: process.env.MODEL_NAME || "claude-sonnet-4-20250514",
@@ -667,9 +667,18 @@ app.post("/api/chat", rateLimit, async (req, res) => {
     stream.on("error", (error) => {
       clearTimeout(apiTimeout);
       const isTimeout = error.name === "AbortError" || error.message?.includes("abort");
-      const errorMsg = isTimeout
-        ? "Desole, la reponse a pris trop de temps. Reessaie dans un instant."
-        : "Erreur de communication.";
+      const isCredits = error.message?.includes("credit balance") || error.message?.includes("billing");
+      const isOverloaded = error.status === 529 || error.message?.includes("overloaded");
+      let errorMsg;
+      if (isTimeout) {
+        errorMsg = "Desole, la reponse a pris trop de temps. Reessaie dans un instant.";
+      } else if (isCredits) {
+        errorMsg = "Le service est temporairement indisponible. Nous travaillons a le retablir.";
+      } else if (isOverloaded) {
+        errorMsg = "Nuta est tres sollicitee en ce moment. Reessaie dans quelques instants.";
+      } else {
+        errorMsg = "Oups, un petit souci de connexion. Reessaie dans un instant.";
+      }
       console.error("[nuta] Erreur stream Anthropic:", error.message);
       res.write(`data: ${JSON.stringify({ type: "error", error: errorMsg })}\n\n`);
       res.end();
@@ -680,15 +689,15 @@ app.post("/api/chat", rateLimit, async (req, res) => {
     if (error.status === 429) {
       return res
         .status(429)
-        .json({ error: "Service temporairement sature. Reessaie dans un instant." });
+        .json({ error: "Nuta est tres sollicitee en ce moment. Reessaie dans un instant." });
     }
-    if (error.status === 401) {
+    if (error.status === 401 || error.message?.includes("credit balance") || error.message?.includes("billing")) {
       return res
         .status(503)
-        .json({ error: "Erreur de configuration du service." });
+        .json({ error: "Le service est temporairement indisponible. Nous travaillons a le retablir." });
     }
 
-    res.status(500).json({ error: "Erreur de communication avec Nuta." });
+    res.status(500).json({ error: "Oups, un petit souci de connexion. Reessaie dans un instant." });
   }
 });
 
