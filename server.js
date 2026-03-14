@@ -1,5 +1,6 @@
 import "dotenv/config";
 import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
 import express from "express";
 import helmet from "helmet";
 import { fileURLToPath } from "url";
@@ -148,8 +149,51 @@ setInterval(() => {
   }
 }, SESSION_CLEANUP_INTERVAL);
 
-// ── Anthropic client ──
-const anthropic = new Anthropic();
+// ── AI Provider clients ──
+const anthropic = process.env.ANTHROPIC_API_KEY ? new Anthropic() : null;
+const openai = process.env.OPENAI_API_KEY ? new OpenAI() : null;
+
+// Provider health tracking
+const providerHealth = {
+  anthropic: { failures: 0, lastFailure: 0, disabled: false },
+  openai: { failures: 0, lastFailure: 0, disabled: false },
+};
+const FAILURE_THRESHOLD = 3; // disable after 3 consecutive failures
+const RECOVERY_DELAY = 60_000; // re-enable after 60s
+
+function getAvailableProvider() {
+  const now = Date.now();
+  // Re-enable providers after recovery delay
+  for (const [name, health] of Object.entries(providerHealth)) {
+    if (health.disabled && now - health.lastFailure > RECOVERY_DELAY) {
+      health.disabled = false;
+      health.failures = 0;
+      console.error(`[nuta] Provider ${name} re-enabled after recovery delay`);
+    }
+  }
+  // Prefer Anthropic, fallback to OpenAI
+  if (anthropic && !providerHealth.anthropic.disabled) return "anthropic";
+  if (openai && !providerHealth.openai.disabled) return "openai";
+  // Last resort: try Anthropic even if "disabled" (better than nothing)
+  if (anthropic) return "anthropic";
+  if (openai) return "openai";
+  return null;
+}
+
+function markProviderFailure(name) {
+  const health = providerHealth[name];
+  health.failures++;
+  health.lastFailure = Date.now();
+  if (health.failures >= FAILURE_THRESHOLD) {
+    health.disabled = true;
+    console.error(`[nuta] Provider ${name} disabled after ${FAILURE_THRESHOLD} consecutive failures`);
+  }
+}
+
+function markProviderSuccess(name) {
+  providerHealth[name].failures = 0;
+  providerHealth[name].disabled = false;
+}
 
 // Language instructions
 const LANG_INSTRUCTIONS = {
@@ -622,82 +666,185 @@ app.post("/api/chat", rateLimit, async (req, res) => {
     session.messages.splice(0, session.messages.length - 20);
   }
 
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!anthropic && !openai) {
     return res.status(503).json({
-      error:
-        "Le service est temporairement indisponible. Veuillez reessayer plus tard.",
+      error: "Le service est temporairement indisponible. Veuillez reessayer plus tard.",
     });
   }
 
-  try {
-    // Set SSE headers for streaming
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
-    res.flushHeaders();
+  // Set SSE headers for streaming
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders();
 
-    let fullText = "";
+  let responseClosed = false;
 
-    // AbortController with 30s timeout on Anthropic API call
-    const controller = new AbortController();
-    const apiTimeout = setTimeout(() => {
-      controller.abort();
-    }, 45_000);
+  function safeWrite(data) {
+    if (!responseClosed && !res.writableEnded) {
+      res.write(data);
+    }
+  }
 
-    const stream = anthropic.messages.stream({
-      model: process.env.MODEL_NAME || "claude-sonnet-4-20250514",
-      max_tokens: 1024,
-      system: getSystemPrompt(lang),
-      messages: session.messages,
-    }, { signal: controller.signal });
-
-    stream.on("text", (text) => {
-      fullText += text;
-      res.write(`data: ${JSON.stringify({ type: "delta", text })}\n\n`);
-    });
-
-    stream.on("end", () => {
-      clearTimeout(apiTimeout);
-      session.messages.push({ role: "assistant", content: fullText });
-      saveSessions(); // persist after each exchange
-      res.write(`data: ${JSON.stringify({ type: "done" })}\n\n`);
+  function safeEnd() {
+    if (!responseClosed && !res.writableEnded) {
+      responseClosed = true;
       res.end();
-    });
+    }
+  }
 
-    stream.on("error", (error) => {
-      clearTimeout(apiTimeout);
-      const isTimeout = error.name === "AbortError" || error.message?.includes("abort");
-      const isCredits = error.message?.includes("credit balance") || error.message?.includes("billing");
-      const isOverloaded = error.status === 529 || error.message?.includes("overloaded");
-      let errorMsg;
-      if (isTimeout) {
-        errorMsg = "Desole, la reponse a pris trop de temps. Reessaie dans un instant.";
-      } else if (isCredits) {
-        errorMsg = "Le service est temporairement indisponible. Nous travaillons a le retablir.";
-      } else if (isOverloaded) {
-        errorMsg = "Nuta est tres sollicitee en ce moment. Reessaie dans quelques instants.";
-      } else {
-        errorMsg = "Oups, un petit souci de connexion. Reessaie dans un instant.";
+  const systemPrompt = getSystemPrompt(lang);
+
+  // Try with primary provider, fallback to secondary
+  async function streamWithAnthropic() {
+    return new Promise((resolve, reject) => {
+      const controller = new AbortController();
+      const apiTimeout = setTimeout(() => controller.abort(), 45_000);
+      let fullText = "";
+
+      const stream = anthropic.messages.stream({
+        model: process.env.MODEL_NAME || "claude-sonnet-4-20250514",
+        max_tokens: 1024,
+        system: systemPrompt,
+        messages: session.messages,
+      }, { signal: controller.signal });
+
+      stream.on("text", (text) => {
+        fullText += text;
+        safeWrite(`data: ${JSON.stringify({ type: "delta", text })}\n\n`);
+      });
+
+      stream.on("end", () => {
+        clearTimeout(apiTimeout);
+        markProviderSuccess("anthropic");
+        if (fullText.length > 0) {
+          session.messages.push({ role: "assistant", content: fullText });
+          saveSessions();
+        }
+        safeWrite(`data: ${JSON.stringify({ type: "done" })}\n\n`);
+        safeEnd();
+        resolve();
+      });
+
+      stream.on("error", (error) => {
+        clearTimeout(apiTimeout);
+        markProviderFailure("anthropic");
+        console.error("[nuta] Anthropic error:", error.message);
+        // If nothing was written yet, we can fallback
+        if (fullText.length === 0) {
+          reject(error);
+        } else {
+          // Partial response — send error and close
+          safeWrite(`data: ${JSON.stringify({ type: "error", error: "Connexion interrompue. Reessaie." })}\n\n`);
+          safeEnd();
+          resolve();
+        }
+      });
+    });
+  }
+
+  async function streamWithOpenAI() {
+    return new Promise(async (resolve, reject) => {
+      const controller = new AbortController();
+      const apiTimeout = setTimeout(() => controller.abort(), 45_000);
+      let fullText = "";
+
+      try {
+        const openaiMessages = [
+          { role: "system", content: systemPrompt },
+          ...session.messages,
+        ];
+
+        const stream = await openai.chat.completions.create({
+          model: process.env.OPENAI_MODEL || "gpt-4o",
+          max_tokens: 1024,
+          messages: openaiMessages,
+          stream: true,
+        }, { signal: controller.signal });
+
+        for await (const chunk of stream) {
+          const text = chunk.choices?.[0]?.delta?.content;
+          if (text) {
+            fullText += text;
+            safeWrite(`data: ${JSON.stringify({ type: "delta", text })}\n\n`);
+          }
+        }
+
+        clearTimeout(apiTimeout);
+        markProviderSuccess("openai");
+        if (fullText.length > 0) {
+          session.messages.push({ role: "assistant", content: fullText });
+          saveSessions();
+        }
+        safeWrite(`data: ${JSON.stringify({ type: "done" })}\n\n`);
+        safeEnd();
+        resolve();
+      } catch (error) {
+        clearTimeout(apiTimeout);
+        markProviderFailure("openai");
+        console.error("[nuta] OpenAI error:", error.message);
+        if (fullText.length === 0) {
+          reject(error);
+        } else {
+          safeWrite(`data: ${JSON.stringify({ type: "error", error: "Connexion interrompue. Reessaie." })}\n\n`);
+          safeEnd();
+          resolve();
+        }
       }
-      console.error("[nuta] Erreur stream Anthropic:", error.message);
-      res.write(`data: ${JSON.stringify({ type: "error", error: errorMsg })}\n\n`);
-      res.end();
     });
+  }
+
+  // Main execution: try primary, fallback to secondary
+  try {
+    const primary = getAvailableProvider();
+    console.error(`[nuta] Using provider: ${primary}`);
+
+    if (primary === "anthropic") {
+      try {
+        await streamWithAnthropic();
+      } catch (anthropicError) {
+        // Anthropic failed before any text — try OpenAI fallback
+        if (openai) {
+          console.error("[nuta] Fallback to OpenAI...");
+          try {
+            await streamWithOpenAI();
+          } catch (openaiError) {
+            console.error("[nuta] OpenAI fallback also failed:", openaiError.message);
+            safeWrite(`data: ${JSON.stringify({ type: "error", error: "Tous les services sont temporairement indisponibles. Reessaie dans un instant." })}\n\n`);
+            safeEnd();
+          }
+        } else {
+          safeWrite(`data: ${JSON.stringify({ type: "error", error: "Le service est temporairement indisponible. Nous travaillons a le retablir." })}\n\n`);
+          safeEnd();
+        }
+      }
+    } else if (primary === "openai") {
+      try {
+        await streamWithOpenAI();
+      } catch (openaiError) {
+        // OpenAI failed — try Anthropic fallback
+        if (anthropic) {
+          console.error("[nuta] Fallback to Anthropic...");
+          try {
+            await streamWithAnthropic();
+          } catch (anthropicError) {
+            console.error("[nuta] Anthropic fallback also failed:", anthropicError.message);
+            safeWrite(`data: ${JSON.stringify({ type: "error", error: "Tous les services sont temporairement indisponibles. Reessaie dans un instant." })}\n\n`);
+            safeEnd();
+          }
+        } else {
+          safeWrite(`data: ${JSON.stringify({ type: "error", error: "Le service est temporairement indisponible. Nous travaillons a le retablir." })}\n\n`);
+          safeEnd();
+        }
+      }
+    } else {
+      safeWrite(`data: ${JSON.stringify({ type: "error", error: "Aucun service IA disponible." })}\n\n`);
+      safeEnd();
+    }
   } catch (error) {
-    console.error("[nuta] Erreur API Anthropic:", error.message);
-
-    if (error.status === 429) {
-      return res
-        .status(429)
-        .json({ error: "Nuta est tres sollicitee en ce moment. Reessaie dans un instant." });
-    }
-    if (error.status === 401 || error.message?.includes("credit balance") || error.message?.includes("billing")) {
-      return res
-        .status(503)
-        .json({ error: "Le service est temporairement indisponible. Nous travaillons a le retablir." });
-    }
-
-    res.status(500).json({ error: "Oups, un petit souci de connexion. Reessaie dans un instant." });
+    console.error("[nuta] Erreur inattendue:", error.message);
+    safeWrite(`data: ${JSON.stringify({ type: "error", error: "Erreur inattendue. Reessaie." })}\n\n`);
+    safeEnd();
   }
 });
 
@@ -721,6 +868,19 @@ app.get("/api/health", (req, res) => {
     status: "ok",
     timestamp: new Date().toISOString(),
     sessions: conversationHistories.size,
+    providers: {
+      anthropic: {
+        configured: !!anthropic,
+        healthy: !providerHealth.anthropic.disabled,
+        failures: providerHealth.anthropic.failures,
+      },
+      openai: {
+        configured: !!openai,
+        healthy: !providerHealth.openai.disabled,
+        failures: providerHealth.openai.failures,
+      },
+      active: getAvailableProvider(),
+    },
   });
 });
 
