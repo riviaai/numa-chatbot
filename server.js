@@ -627,6 +627,190 @@ A chaque niveau, TEASE le niveau suivant pour donner envie de continuer.
 LANGUE : ${LANG_INSTRUCTIONS[lang] || LANG_INSTRUCTIONS.fr}`;
 }
 
+// ── Numerology calculations (server-side for accuracy) ──
+const PYTH_TABLE = { A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,I:9,J:1,K:2,L:3,M:4,N:5,O:6,P:7,Q:8,R:9,S:1,T:2,U:3,V:4,W:5,X:6,Y:7,Z:8 };
+const VOWELS = new Set(['A','E','I','O','U','Y']);
+
+function reduceNumber(n) {
+  while (n > 9 && n !== 11 && n !== 22 && n !== 33) {
+    n = String(n).split('').reduce((s, d) => s + parseInt(d), 0);
+  }
+  return n;
+}
+
+function calcLifePath(day, month, year) {
+  // Sum ALL individual digits
+  const allDigits = `${day}${String(month).padStart(2,'0')}${year}`;
+  const rawSum = allDigits.split('').reduce((s, d) => s + parseInt(d), 0);
+  return { result: reduceNumber(rawSum), rawSum };
+}
+
+function calcPsychic(day) {
+  return { result: reduceNumber(day), raw: day };
+}
+
+function calcLetterValues(name) {
+  const clean = name.toUpperCase().replace(/[^A-Z]/g, '');
+  let allSum = 0, vowelSum = 0, consonantSum = 0;
+  for (const ch of clean) {
+    const val = PYTH_TABLE[ch] || 0;
+    allSum += val;
+    if (VOWELS.has(ch)) vowelSum += val;
+    else consonantSum += val;
+  }
+  return {
+    expression: reduceNumber(allSum), expressionRaw: allSum,
+    intimate: reduceNumber(vowelSum), intimateRaw: vowelSum,
+    realization: reduceNumber(consonantSum), realizationRaw: consonantSum,
+  };
+}
+
+function calcPersonalYear(day, month, currentYear) {
+  const sum = reduceNumber(day) + reduceNumber(month) + reduceNumber(currentYear);
+  return reduceNumber(sum);
+}
+
+function detectKarmicDebts(rawSum) {
+  const debts = [];
+  if (String(rawSum).includes('13') || rawSum === 13) debts.push(13);
+  if (String(rawSum).includes('14') || rawSum === 14) debts.push(14);
+  if (String(rawSum).includes('16') || rawSum === 16) debts.push(16);
+  if (String(rawSum).includes('19') || rawSum === 19) debts.push(19);
+  return debts;
+}
+
+// Extract DOB from first message (format: JJ/MM/AAAA)
+function extractDOB(text) {
+  const match = text.match(/(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})/);
+  if (!match) return null;
+  return { day: parseInt(match[1]), month: parseInt(match[2]), year: parseInt(match[3]) };
+}
+
+// Extract name from first message
+function extractName(text) {
+  // Match patterns like "je m'appelle X", "my name is X", "me llamo X", etc.
+  const patterns = [
+    /(?:m'appelle|appelle)\s+([A-Za-zÀ-ÿ]+)/i,
+    /(?:my name is|i'm|i am)\s+([A-Za-zÀ-ÿ]+)/i,
+    /(?:me llamo|soy)\s+([A-Za-zÀ-ÿ]+)/i,
+    /(?:heiße|heisse|bin)\s+([A-Za-zÀ-ÿ]+)/i,
+    /(?:mi chiamo|sono)\s+([A-Za-zÀ-ÿ]+)/i,
+  ];
+  for (const p of patterns) {
+    const m = text.match(p);
+    if (m) return m[1];
+  }
+  return null;
+}
+
+// Build numerology context note for first message
+function buildNumerologyContext(messages) {
+  if (messages.length !== 1) return null; // only on first message
+  const firstMsg = messages[0].content;
+  const dob = extractDOB(firstMsg);
+  const name = extractName(firstMsg);
+  if (!dob) return null;
+
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
+  const currentDay = now.getDate();
+
+  const lifePath = calcLifePath(dob.day, dob.month, dob.year);
+  const psychic = calcPsychic(dob.day);
+  const personalYear = calcPersonalYear(dob.day, dob.month, currentYear);
+  const personalMonth = reduceNumber(personalYear + currentMonth);
+  const personalDay = reduceNumber(personalMonth + currentDay);
+  const karmicDebts = detectKarmicDebts(lifePath.rawSum);
+
+  let ctx = `\n[CALCULS VERIFIES - UTILISE CES VALEURS, NE RECALCULE PAS]\n`;
+  ctx += `Date de naissance: ${String(dob.day).padStart(2,'0')}/${String(dob.month).padStart(2,'0')}/${dob.year}\n`;
+  ctx += `Chemin de vie: ${lifePath.result} (somme brute: ${lifePath.rawSum})\n`;
+  ctx += `Nombre psychique (jour): ${psychic.result} (jour brut: ${psychic.raw})\n`;
+  ctx += `Annee personnelle ${currentYear}: ${personalYear}\n`;
+  ctx += `Mois personnel: ${personalMonth}\n`;
+  ctx += `Jour personnel: ${personalDay}\n`;
+  if (karmicDebts.length > 0) ctx += `Dettes karmiques detectees: ${karmicDebts.join(', ')}\n`;
+
+  if (name) {
+    ctx += `Pierre angulaire (1ere lettre prenom "${name}"): ${name[0].toUpperCase()} = ${PYTH_TABLE[name[0].toUpperCase()] || '?'}\n`;
+    ctx += `Capstone (derniere lettre): ${name[name.length-1].toUpperCase()} = ${PYTH_TABLE[name[name.length-1].toUpperCase()] || '?'}\n`;
+    const nameCalc = calcLetterValues(name);
+    ctx += `Nombre actif (prenom seul): ${nameCalc.expression} (somme: ${nameCalc.expressionRaw})\n`;
+  }
+
+  // Pinnacle calculation
+  const pinnacleAge1 = 36 - lifePath.result;
+  const age = currentYear - dob.year;
+  let currentPinnacle;
+  if (age <= pinnacleAge1) currentPinnacle = `1er (jusqu'a ${pinnacleAge1} ans)`;
+  else if (age <= pinnacleAge1 + 9) currentPinnacle = `2eme (${pinnacleAge1+1}-${pinnacleAge1+9} ans)`;
+  else if (age <= pinnacleAge1 + 18) currentPinnacle = `3eme (${pinnacleAge1+10}-${pinnacleAge1+18} ans)`;
+  else currentPinnacle = `4eme (apres ${pinnacleAge1+18} ans)`;
+  ctx += `Age actuel: ~${age} ans\n`;
+  ctx += `Pinnacle actuel: ${currentPinnacle}\n`;
+
+  return ctx;
+}
+
+// Build numerology context for surname (when provided later in conversation)
+function buildSurnameContext(messages) {
+  // Check if assistant asked for surname and user just provided it
+  if (messages.length < 3) return null;
+  const lastAssistant = [...messages].reverse().find(m => m.role === 'assistant');
+  const lastUser = messages[messages.length - 1];
+  if (!lastAssistant || lastUser.role !== 'user') return null;
+
+  // Check if assistant asked for surname
+  const askPatterns = /nom de famille|surname|last name|apellido|nachname|cognome/i;
+  if (!askPatterns.test(lastAssistant.content)) return null;
+
+  // The user's response is likely just a surname
+  const surname = lastUser.content.trim().split(/\s+/)[0].replace(/[^A-Za-zÀ-ÿ'-]/g, '');
+  if (!surname || surname.length < 2) return null;
+
+  // Find the first name from earlier messages
+  let firstName = null;
+  for (const m of messages) {
+    if (m.role === 'user') {
+      firstName = extractName(m.content);
+      if (firstName) break;
+    }
+  }
+  if (!firstName) return null;
+
+  const fullName = firstName + ' ' + surname;
+  const fullCalc = calcLetterValues(fullName);
+  const surnameCalc = calcLetterValues(surname);
+
+  let ctx = `\n[CALCULS NOM COMPLET VERIFIES - UTILISE CES VALEURS]\n`;
+  ctx += `Nom complet: ${firstName} ${surname}\n`;
+  ctx += `Nombre d'expression (nom complet): ${fullCalc.expression} (somme: ${fullCalc.expressionRaw})\n`;
+  ctx += `Nombre intime/elan du coeur (voyelles): ${fullCalc.intimate} (somme: ${fullCalc.intimateRaw})\n`;
+  ctx += `Nombre de realisation/personnalite (consonnes): ${fullCalc.realization} (somme: ${fullCalc.realizationRaw})\n`;
+  ctx += `Nombre hereditaire (nom seul): ${surnameCalc.expression} (somme: ${surnameCalc.expressionRaw})\n`;
+
+  // Passion cachée (most frequent digit)
+  const digitCount = {};
+  for (const ch of fullName.toUpperCase().replace(/[^A-Z]/g, '')) {
+    const v = PYTH_TABLE[ch];
+    digitCount[v] = (digitCount[v] || 0) + 1;
+  }
+  const maxCount = Math.max(...Object.values(digitCount));
+  const passion = Object.entries(digitCount).filter(([,c]) => c === maxCount).map(([d]) => d);
+  ctx += `Passion cachee: ${passion.join(', ')} (apparait ${maxCount} fois)\n`;
+
+  // Leçons karmiques du nom (missing digits 1-9)
+  const missing = [];
+  for (let i = 1; i <= 9; i++) {
+    if (!digitCount[i]) missing.push(i);
+  }
+  if (missing.length > 0) ctx += `Lecons karmiques du nom (chiffres absents): ${missing.join(', ')}\n`;
+  ctx += `Soi subconscient: ${9 - missing.length}\n`;
+
+  return ctx;
+}
+
 // ── API: Chat endpoint ──
 app.post("/api/chat", rateLimit, async (req, res) => {
   const { message, sessionId, lang } = req.body;
@@ -695,6 +879,12 @@ app.post("/api/chat", rateLimit, async (req, res) => {
 
   const systemPrompt = getSystemPrompt(lang);
 
+  // Inject server-side numerology calculations into messages
+  const numCtx = buildNumerologyContext(session.messages) || buildSurnameContext(session.messages);
+  const messagesForAI = numCtx
+    ? [...session.messages.slice(0, -1), { role: "user", content: session.messages[session.messages.length - 1].content + numCtx }]
+    : session.messages;
+
   // Try with primary provider, fallback to secondary
   async function streamWithAnthropic() {
     return new Promise((resolve, reject) => {
@@ -706,7 +896,7 @@ app.post("/api/chat", rateLimit, async (req, res) => {
         model: process.env.MODEL_NAME || "claude-sonnet-4-20250514",
         max_tokens: 1024,
         system: systemPrompt,
-        messages: session.messages,
+        messages: messagesForAI,
       }, { signal: controller.signal });
 
       stream.on("text", (text) => {
@@ -752,7 +942,7 @@ app.post("/api/chat", rateLimit, async (req, res) => {
       try {
         const openaiMessages = [
           { role: "system", content: systemPrompt },
-          ...session.messages,
+          ...messagesForAI,
         ];
 
         const stream = await openai.chat.completions.create({

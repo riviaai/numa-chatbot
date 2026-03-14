@@ -4,7 +4,7 @@
 # Usage: ./service.sh {start|stop|restart|status|logs}
 # ============================================================
 
-SERVICE_NAME="com.nuta.service"
+SERVICE_NAME="com.numa.service"
 PLIST="$HOME/Library/LaunchAgents/${SERVICE_NAME}.plist"
 PORT=3456
 APP_DIR="/Users/steven/Medium/numerologie-chatbot"
@@ -73,10 +73,10 @@ case "$1" in
 
   logs)
     echo "=== Recent stdout ==="
-    tail -50 "${LOG_DIR}/nuta-stdout.log" 2>/dev/null || echo "(no stdout log)"
+    tail -50 "${LOG_DIR}/numa-stdout.log" 2>/dev/null || echo "(no stdout log)"
     echo ""
     echo "=== Recent stderr ==="
-    tail -50 "${LOG_DIR}/nuta-stderr.log" 2>/dev/null || echo "(no stderr log)"
+    tail -50 "${LOG_DIR}/numa-stderr.log" 2>/dev/null || echo "(no stderr log)"
     ;;
 
   *)
