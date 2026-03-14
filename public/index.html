@@ -54,7 +54,7 @@
 
     /* ── Header ── */
     .header {
-      background: linear-gradient(135deg, #6C47FF 0%, #8B6FFF 50%, #E8DEFF 100%);
+      background: linear-gradient(135deg, #5535E0 0%, #6C47FF 50%, #8B6FFF 100%);
       padding: 16px 20px;
       display: flex;
       align-items: center;
@@ -144,7 +144,7 @@
       align-items: center;
       gap: 6px;
       font-size: 0.7rem;
-      color: var(--accent-gold);
+      color: #FFFFFF;
       font-weight: 600;
     }
 
@@ -153,8 +153,8 @@
     }
 
     .lang-btn {
-      background: rgba(255,255,255,0.35);
-      border: 1.5px solid rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.25);
+      border: 1.5px solid rgba(255,255,255,0.5);
       border-radius: 8px;
       padding: 6px 12px;
       font-family: 'Inter', sans-serif;
@@ -178,8 +178,8 @@
     .lang-btn:hover { background: rgba(255,255,255,0.5); }
 
     .text-size-btn {
-      background: rgba(255,255,255,0.35);
-      border: 1.5px solid rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.25);
+      border: 1.5px solid rgba(255,255,255,0.5);
       border-radius: 8px;
       padding: 6px 10px;
       font-family: 'Inter', sans-serif;
@@ -249,8 +249,9 @@
     .status-dot {
       width: 7px;
       height: 7px;
-      background: var(--accent-gold);
+      background: var(--success);
       border-radius: 50%;
+      box-shadow: 0 0 6px rgba(0,200,151,0.6);
       animation: status-pulse 2s ease-in-out infinite;
     }
 
