@@ -1302,7 +1302,7 @@
         var res = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: text, sessionId: sessionId, lang: currentLang }),
+          body: JSON.stringify({ message: text, sessionId: sessionId, lang: currentLang, userName: onboardData.name, userDob: onboardData.dob }),
         });
 
         if (res.status === 429) {
@@ -1361,6 +1361,13 @@
 
     // ── Onboarding ──
     var onboardData = { name: '', dob: '', interest: '' };
+    // Load stored onboarding data for session recovery
+    try {
+      var storedName = localStorage.getItem('nuta_user_name');
+      var storedDob = localStorage.getItem('nuta_user_dob');
+      if (storedName) onboardData.name = storedName;
+      if (storedDob) onboardData.dob = storedDob;
+    } catch(e) {}
 
     var nameInput = document.getElementById('onboard-name');
     var dobInput = document.getElementById('onboard-dob');
@@ -1404,6 +1411,8 @@
       sessionId = 'session_' + Math.random().toString(36).substring(2, 10);
       try { localStorage.setItem('nuta_session_id', sessionId); } catch(e) {}
       try { localStorage.removeItem('nuta_onboarded'); } catch(e) {}
+      try { localStorage.removeItem('nuta_user_name'); } catch(e) {}
+      try { localStorage.removeItem('nuta_user_dob'); } catch(e) {}
       // Clear chat
       chatArea.innerHTML = '';
       // Re-add welcome screen
@@ -1517,8 +1526,12 @@
     function startChat() {
       welcome.style.display = 'none';
       newConvBtn.classList.add('visible');
-      // Mark as onboarded for returning visits
-      try { localStorage.setItem('nuta_onboarded', 'true'); } catch(e) {}
+      // Mark as onboarded for returning visits + store user data for session recovery
+      try {
+        localStorage.setItem('nuta_onboarded', 'true');
+        localStorage.setItem('nuta_user_name', onboardData.name);
+        localStorage.setItem('nuta_user_dob', onboardData.dob);
+      } catch(e) {}
       // Build intro message with name only (surname asked later by chatbot)
       var introMsg = t('introMsg').replace('{name}', onboardData.name).replace('{dob}', onboardData.dob).replace('{interest}', onboardData.interest);
       input.value = introMsg;

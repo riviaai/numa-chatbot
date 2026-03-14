@@ -813,7 +813,7 @@ function buildSurnameContext(messages) {
 
 // ── API: Chat endpoint ──
 app.post("/api/chat", rateLimit, async (req, res) => {
-  const { message, sessionId, lang } = req.body;
+  const { message, sessionId, lang, userName, userDob } = req.body;
 
   // Input validation
   if (!message || typeof message !== "string") {
@@ -843,7 +843,15 @@ app.post("/api/chat", rateLimit, async (req, res) => {
 
   const session = conversationHistories.get(sid);
   session.lastActivity = Date.now();
-  session.messages.push({ role: "user", content: trimmed });
+
+  // Session recovery: if session is empty but we have user context from localStorage,
+  // prepend context to the user message so the AI knows who the user is
+  if (session.messages.length === 0 && userName && userDob) {
+    const contextPrefix = `[CONTEXTE : Je suis ${userName}, ne(e) le ${userDob}. On discutait deja mais la session a ete perdue. Continue naturellement sans te re-presenter ni refaire mon profil de base.]\n\n`;
+    session.messages.push({ role: "user", content: contextPrefix + trimmed });
+  } else {
+    session.messages.push({ role: "user", content: trimmed });
+  }
 
   // Keep last 20 messages to avoid token limits
   if (session.messages.length > 20) {
