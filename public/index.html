@@ -640,6 +640,48 @@
       background: var(--accent-purple);
     }
 
+    .share-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1.5px solid var(--gray-200);
+      background: var(--white);
+      color: var(--gray-500);
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .share-btn.visible { display: flex; }
+    .share-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--accent-purple);
+    }
+
+    .share-toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--gray-800);
+      color: var(--white);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 100;
+      pointer-events: none;
+    }
+    .share-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
     .send-btn:active { transform: scale(0.95); }
 
     .send-btn:disabled {
@@ -934,6 +976,11 @@
         <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
       </svg>
     </button>
+    <button class="share-btn" id="share-btn" aria-label="Partager" title="Partager ma lecture">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 12v7a2 2 0 002 2h12a2 2 0 002-2v-7M16 6l-4-4-4 4M12 2v13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
     <div class="input-wrapper">
       <textarea id="message-input" rows="1" placeholder="Ta question à Nuta..." maxlength="2000"></textarea>
     </div>
@@ -950,6 +997,8 @@
     <a href="/legal.html">Mentions l&eacute;gales</a><span class="sep">|</span><a href="/privacy.html">Confidentialit&eacute;</a><span class="sep">|</span><a href="/terms.html">CGU/CGV</a>
   </footer>
 
+
+  <div class="share-toast" id="share-toast"></div>
 
   <script>
     'use strict';
@@ -980,7 +1029,10 @@
         iChemin: 'chemin de vie et mission de vie', iAmour: 'compatibilit\u00e9 amoureuse',
         iCarriere: 'carri\u00e8re et r\u00e9ussite professionnelle', iPrevisions: 'ann\u00e9e personnelle et pr\u00e9visions',
         newConvConfirm: 'Commencer une nouvelle conversation ? L\u2019historique actuel sera conserv\u00e9.',
-        welcomeBack: 'Content de te revoir ! \u2728'
+        welcomeBack: 'Content de te revoir ! \u2728',
+        shareCopied: 'Lecture copi\u00e9e !',
+        shareTitle: 'Ma lecture num\u00e9rologique par Nuta',
+        shareText: 'D\u00e9couvre ta num\u00e9rologie gratuite sur nuta.fr !'
       },
       en: {
         code: 'EN', subtitle: 'Your numerology guide', status: 'Online',
@@ -1006,7 +1058,10 @@
         iChemin: 'life path and life mission', iAmour: 'love compatibility',
         iCarriere: 'career and professional success', iPrevisions: 'personal year and forecasts',
         newConvConfirm: 'Start a new conversation? Current history will be kept.',
-        welcomeBack: 'Welcome back! \u2728'
+        welcomeBack: 'Welcome back! \u2728',
+        shareCopied: 'Reading copied!',
+        shareTitle: 'My numerology reading by Nuta',
+        shareText: 'Discover your free numerology on nuta.fr!'
       },
       es: {
         code: 'ES', subtitle: 'Tu gu\u00eda de numerolog\u00eda', status: 'En l\u00ednea',
@@ -1032,7 +1087,10 @@
         iChemin: 'camino de vida y misi\u00f3n', iAmour: 'compatibilidad amorosa',
         iCarriere: 'carrera y \u00e9xito profesional', iPrevisions: 'a\u00f1o personal y predicciones',
         newConvConfirm: '\u00bfIniciar una nueva conversaci\u00f3n? El historial actual se conservar\u00e1.',
-        welcomeBack: '\u00a1Me alegro de verte! \u2728'
+        welcomeBack: '\u00a1Me alegro de verte! \u2728',
+        shareCopied: '\u00a1Lectura copiada!',
+        shareTitle: 'Mi lectura numerol\u00f3gica por Nuta',
+        shareText: '\u00a1Descubre tu numerolog\u00eda gratis en nuta.fr!'
       },
       de: {
         code: 'DE', subtitle: 'Dein Numerologie-Guide', status: 'Online',
@@ -1058,7 +1116,10 @@
         iChemin: 'Lebensweg und Lebensmission', iAmour: 'Liebeskompatibilit\u00e4t',
         iCarriere: 'Karriere und beruflicher Erfolg', iPrevisions: 'pers\u00f6nliches Jahr und Prognosen',
         newConvConfirm: 'Neues Gespr\u00e4ch starten? Der aktuelle Verlauf bleibt erhalten.',
-        welcomeBack: 'Sch\u00f6n, dich wiederzusehen! \u2728'
+        welcomeBack: 'Sch\u00f6n, dich wiederzusehen! \u2728',
+        shareCopied: 'Lesung kopiert!',
+        shareTitle: 'Meine Numerologie-Lesung von Nuta',
+        shareText: 'Entdecke deine kostenlose Numerologie auf nuta.fr!'
       },
       it: {
         code: 'IT', subtitle: 'La tua guida di numerologia', status: 'Online',
@@ -1084,7 +1145,10 @@
         iChemin: 'percorso di vita e missione', iAmour: 'compatibilit\u00e0 amorosa',
         iCarriere: 'carriera e successo professionale', iPrevisions: 'anno personale e previsioni',
         newConvConfirm: 'Iniziare una nuova conversazione? La cronologia attuale verr\u00e0 conservata.',
-        welcomeBack: 'Che bello rivederti! \u2728'
+        welcomeBack: 'Che bello rivederti! \u2728',
+        shareCopied: 'Lettura copiata!',
+        shareTitle: 'La mia lettura numerologica di Nuta',
+        shareText: 'Scopri la tua numerologia gratuita su nuta.fr!'
       }
     };
 
@@ -1378,11 +1442,13 @@
     var returningUser = false;
     try { returningUser = localStorage.getItem('nuta_onboarded') === 'true'; } catch(e) {}
     var newConvBtn = document.getElementById('new-conv-btn');
+    var shareBtn = document.getElementById('share-btn');
 
     if (returningUser && storedSession) {
       // Skip onboarding, go straight to chat
       welcome.style.display = 'none';
       newConvBtn.classList.add('visible');
+      shareBtn.classList.add('visible');
       // Load chat history from server
       (function loadHistory() {
         fetch('/api/history/' + encodeURIComponent(sessionId))
@@ -1425,6 +1491,7 @@
       nameInput.value = '';
       dobInput.value = '';
       newConvBtn.classList.remove('visible');
+      shareBtn.classList.remove('visible');
       returningUser = false;
       nameInput.focus();
     }
@@ -1526,6 +1593,7 @@
     function startChat() {
       welcome.style.display = 'none';
       newConvBtn.classList.add('visible');
+      shareBtn.classList.add('visible');
       // Mark as onboarded for returning visits + store user data for session recovery
       try {
         localStorage.setItem('nuta_onboarded', 'true');
@@ -1550,6 +1618,49 @@
 
     document.getElementById('cookie-accept').addEventListener('click', function() { acceptCookies(); });
     document.getElementById('cookie-refuse').addEventListener('click', function() { refuseCookies(); });
+
+    // ── Share button ──
+    shareBtn.addEventListener('click', function() {
+      // Extract bot messages only (the reading)
+      var botMessages = chatArea.querySelectorAll('.message.bot .message-bubble');
+      if (botMessages.length === 0) return;
+
+      var shareContent = '';
+      botMessages.forEach(function(bubble) {
+        shareContent += bubble.textContent.trim() + '\n\n';
+      });
+      shareContent += '---\n' + t('shareText') + '\nhttps://nuta.fr';
+
+      // Try native share API (mobile), fallback to clipboard
+      if (navigator.share) {
+        navigator.share({
+          title: t('shareTitle'),
+          text: shareContent
+        }).catch(function() {});
+      } else {
+        navigator.clipboard.writeText(shareContent).then(function() {
+          showToast(t('shareCopied'));
+        }).catch(function() {
+          // Fallback for older browsers
+          var textarea = document.createElement('textarea');
+          textarea.value = shareContent;
+          textarea.style.position = 'fixed';
+          textarea.style.opacity = '0';
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+          showToast(t('shareCopied'));
+        });
+      }
+    });
+
+    function showToast(msg) {
+      var toast = document.getElementById('share-toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(function() { toast.classList.remove('show'); }, 2000);
+    }
 
     // ── Language switcher ──
     document.getElementById('lang-btn').addEventListener('click', function(e) {
