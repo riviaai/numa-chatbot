@@ -49,6 +49,12 @@ app.use(
   })
 );
 
+// ── Permissions-Policy header (not included in Helmet v8) ──
+app.use((req, res, next) => {
+  res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+  next();
+});
+
 // ── Static files (no cache on HTML for instant updates) ──
 app.use(express.static(join(__dirname, "public"), {
   setHeaders: (res, path) => {
@@ -76,6 +82,8 @@ function rateLimit(req, res, next) {
 
   entry.count++;
   if (entry.count > RATE_LIMIT_MAX) {
+    const retryAfter = Math.ceil((RATE_LIMIT_WINDOW - (now - entry.start)) / 1000);
+    res.setHeader("Retry-After", String(Math.max(retryAfter, 1)));
     return res
       .status(429)
       .json({ error: "Trop de requetes, reessaie dans une minute." });
@@ -718,6 +726,8 @@ Quand un utilisateur demande ses previsions, donne un apercu du mois personnel a
 - RAPPEL : l'annee en cours est ${currentYear}. TOUJOURS utiliser ${currentYear}
 - Quand la personne pose une question sur l'amour/carriere/etc, CROISE sa question avec ses nombres pour une reponse ultra-personnalisee
 - Quand la personne repond a ta question, REBONDIS sur sa reponse avec une analyse numerologique CONCRETE liee a ce qu'elle vient de dire. Ne recommence pas un nouveau sujet — CREUSE ce qu'elle t'a donne
+- INTERDICTION ABSOLUE de te re-presenter. Tu ne dis JAMAIS "Je suis Nuta" ou "Salut, je suis Nuta" apres le tout premier message. Si la conversation a deja commence, tu CONTINUES naturellement. Si la personne dit quelque chose de bref ("quelque chose de nouveau", "ok", etc.), tu REBONDIS sur le contexte precedent — tu ne recommences JAMAIS a zero
+- Quand la personne repond a ta question avec une reponse courte ou vague, INTERPRETE sa reponse dans le contexte numerologique et donne-lui une revelation concrete basee sur ses nombres. Ne lui redemande JAMAIS de se presenter
 
 LANGUE : ${LANG_INSTRUCTIONS[lang] || LANG_INSTRUCTIONS.fr}`;
 }
@@ -908,6 +918,10 @@ function buildSurnameContext(messages) {
 
 // ── API: Chat endpoint ──
 app.post("/api/chat", rateLimit, async (req, res) => {
+  if (isShuttingDown) {
+    return res.status(503).json({ error: "Le serveur est en cours d'arret. Reessaie dans quelques instants." });
+  }
+
   const { message, sessionId, lang, userName, userDob } = req.body;
 
   // Input validation
@@ -940,10 +954,12 @@ app.post("/api/chat", rateLimit, async (req, res) => {
   session.lastActivity = Date.now();
 
   // Session recovery: if session is empty but we have user context from localStorage,
-  // prepend context to the user message so the AI knows who the user is
+  // inject a fake exchange so the AI knows who the user is and doesn't re-introduce itself
   if (session.messages.length === 0 && userName && userDob) {
-    const contextPrefix = `[CONTEXTE : Je suis ${userName}, ne(e) le ${userDob}. On discutait deja mais la session a ete perdue. Continue naturellement sans te re-presenter ni refaire mon profil de base.]\n\n`;
-    session.messages.push({ role: "user", content: contextPrefix + trimmed });
+    // Simulate that the user already introduced themselves and Nuta already responded
+    session.messages.push({ role: "user", content: `Salut, je m'appelle ${userName}, je suis ne(e) le ${userDob}.` });
+    session.messages.push({ role: "assistant", content: `Salut ${userName} ! On se connait deja, je suis contente de te retrouver. Qu'est-ce que tu voudrais explorer aujourd'hui ?` });
+    session.messages.push({ role: "user", content: trimmed });
   } else {
     session.messages.push({ role: "user", content: trimmed });
   }
@@ -1158,7 +1174,9 @@ app.get("/api/history/:sessionId", (req, res) => {
 // ── API: Health check ──
 app.get("/api/health", (req, res) => {
   res.json({
-    status: "ok",
+    status: isShuttingDown ? "shutting_down" : "ok",
+    version: "1.0.0",
+    uptime: process.uptime(),
     timestamp: new Date().toISOString(),
     sessions: conversationHistories.size,
     providers: {
@@ -1175,6 +1193,19 @@ app.get("/api/health", (req, res) => {
       active: getAvailableProvider(),
     },
   });
+});
+
+// ── Health: liveness probe ──
+app.get("/health/live", (req, res) => {
+  res.json({ status: "alive" });
+});
+
+// ── Health: readiness probe ──
+app.get("/health/ready", (req, res) => {
+  if (isShuttingDown) {
+    return res.status(503).json({ status: "shutting_down" });
+  }
+  res.json({ status: "ready" });
 });
 
 // ── SPA fallback: serve index.html for unmatched routes ──
@@ -1196,12 +1227,16 @@ app.use((err, req, res, _next) => {
 });
 
 // ── Graceful shutdown ──
+let isShuttingDown = false;
+
 const PORT = process.env.PORT || 3456;
 const server = app.listen(PORT, () => {
   console.error(`[nuta] Serveur demarre sur http://localhost:${PORT}`);
 });
 
 function gracefulShutdown(signal) {
+  if (isShuttingDown) return; // Prevent double shutdown
+  isShuttingDown = true;
   console.error(`[nuta] ${signal} recu, arret en cours...`);
   saveSessions();
   server.close(() => {
@@ -1209,9 +1244,9 @@ function gracefulShutdown(signal) {
     process.exit(0);
   });
   setTimeout(() => {
-    console.error("[nuta] Arret force apres timeout.");
+    console.error("[nuta] Arret force apres 30s timeout.");
     process.exit(1);
-  }, 10_000);
+  }, 30_000);
 }
 
 process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
