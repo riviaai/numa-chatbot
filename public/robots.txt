@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /data/
+
+# Sitemaps
+Sitemap: https://numa.example.com/sitemap.xml

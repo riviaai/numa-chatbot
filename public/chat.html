@@ -526,6 +526,19 @@
       box-shadow: 0 2px 8px rgba(108,71,255,0.3);
     }
 
+    /* ── Message timestamp ── */
+    .message-timestamp {
+      font-size: 0.7rem;
+      color: var(--gray-400);
+      margin-top: 4px;
+      text-align: right;
+      font-weight: 400;
+    }
+
+    .message.user .message-timestamp {
+      color: var(--gray-500);
+    }
+
     /* ── Typing indicator ── */
     .typing {
       display: flex;
@@ -1401,6 +1414,10 @@
       return text;
     }
 
+    function formatTime(date) {
+      return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+    }
+
     function addMessage(content, type) {
       if (welcome && type === 'user') {
         welcome.style.display = 'none';
@@ -1427,9 +1444,23 @@
         bubble.innerHTML = formatMessage(content);
       }
 
+      var timestamp = document.createElement('div');
+      timestamp.className = 'message-timestamp';
+      timestamp.textContent = formatTime(new Date());
+
+      var contentWrapper = document.createElement('div');
+      contentWrapper.style.display = 'flex';
+      contentWrapper.style.flexDirection = 'column';
+      contentWrapper.style.flex = '1';
+      contentWrapper.style.minWidth = '0';
+
+      contentWrapper.appendChild(bubble);
+      contentWrapper.appendChild(timestamp);
+
       msg.appendChild(avatar);
-      msg.appendChild(bubble);
+      msg.appendChild(contentWrapper);
       chatArea.appendChild(msg);
+      // Smooth scroll to latest message
       chatArea.scrollTop = chatArea.scrollHeight;
     }
 
@@ -1473,8 +1504,21 @@
       bubble.className = 'message-bubble';
       bubble.id = 'streaming-bubble';
 
+      var timestamp = document.createElement('div');
+      timestamp.className = 'message-timestamp';
+      timestamp.textContent = formatTime(new Date());
+
+      var contentWrapper = document.createElement('div');
+      contentWrapper.style.display = 'flex';
+      contentWrapper.style.flexDirection = 'column';
+      contentWrapper.style.flex = '1';
+      contentWrapper.style.minWidth = '0';
+
+      contentWrapper.appendChild(bubble);
+      contentWrapper.appendChild(timestamp);
+
       msg.appendChild(avatar);
-      msg.appendChild(bubble);
+      msg.appendChild(contentWrapper);
       chatArea.appendChild(msg);
       chatArea.scrollTop = chatArea.scrollHeight;
       return bubble;

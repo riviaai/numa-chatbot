@@ -157,6 +157,42 @@ setInterval(() => {
   }
 }, SESSION_CLEANUP_INTERVAL);
 
+// ── Analytics Tracking ──
+const ANALYTICS_FILE = join(DATA_DIR, "analytics.json");
+const analytics = {
+  totalConversationsStarted: 0,
+  totalMessages: 0,
+  birthDates: {},
+  dailyActiveUsers: {}, // Format: "YYYY-MM-DD": Set of sessionIds
+  lastSaved: Date.now(),
+};
+
+// Load analytics from disk
+try {
+  if (existsSync(ANALYTICS_FILE)) {
+    const data = JSON.parse(readFileSync(ANALYTICS_FILE, "utf-8"));
+    analytics.totalConversationsStarted = data.totalConversationsStarted || 0;
+    analytics.totalMessages = data.totalMessages || 0;
+    analytics.birthDates = data.birthDates || {};
+    // Convert daily active users back to Objects (was Set)
+    analytics.dailyActiveUsers = data.dailyActiveUsers || {};
+    console.error(`[nuta] Analytics restaurees: ${analytics.totalConversationsStarted} conversations.`);
+  }
+} catch (e) {
+  console.error("[nuta] Erreur chargement analytics:", e.message);
+}
+
+function saveAnalytics() {
+  try {
+    writeFileSync(ANALYTICS_FILE, JSON.stringify(analytics, null, 2), "utf-8");
+  } catch (e) {
+    console.error("[nuta] Erreur sauvegarde analytics:", e.message);
+  }
+}
+
+// Auto-save analytics every 5 minutes
+setInterval(saveAnalytics, 5 * 60_000);
+
 // ── AI Provider clients ──
 const anthropic = process.env.ANTHROPIC_API_KEY ? new Anthropic() : null;
 const openai = process.env.OPENAI_API_KEY ? new OpenAI() : null;
@@ -946,8 +982,24 @@ app.post("/api/chat", rateLimit, async (req, res) => {
   }
 
   const sid = sessionId || "default";
-  if (!conversationHistories.has(sid)) {
+  const isNewSession = !conversationHistories.has(sid);
+
+  if (isNewSession) {
     conversationHistories.set(sid, { messages: [], lastActivity: Date.now() });
+    // Track new conversation
+    analytics.totalConversationsStarted++;
+    // Track daily active user
+    const today = new Date().toISOString().split('T')[0];
+    if (!analytics.dailyActiveUsers[today]) {
+      analytics.dailyActiveUsers[today] = [];
+    }
+    if (!analytics.dailyActiveUsers[today].includes(sid)) {
+      analytics.dailyActiveUsers[today].push(sid);
+    }
+    // Track birth date
+    if (userDob) {
+      analytics.birthDates[userDob] = (analytics.birthDates[userDob] || 0) + 1;
+    }
   }
 
   const session = conversationHistories.get(sid);
@@ -968,6 +1020,9 @@ app.post("/api/chat", rateLimit, async (req, res) => {
   if (session.messages.length > 20) {
     session.messages.splice(0, session.messages.length - 20);
   }
+
+  // Track message count
+  analytics.totalMessages++;
 
   if (!anthropic && !openai) {
     return res.status(503).json({
@@ -1208,6 +1263,43 @@ app.get("/health/ready", (req, res) => {
   res.json({ status: "ready" });
 });
 
+// ── Analytics stats (admin-only) ──
+app.get("/api/stats", (req, res) => {
+  const adminKey = process.env.ADMIN_KEY;
+  const providedKey = req.query.key;
+
+  // If no admin key is set in env, allow access (development mode)
+  // If admin key is set, require it to be provided
+  if (adminKey && (!providedKey || providedKey !== adminKey)) {
+    return res.status(403).json({ error: "Unauthorized: invalid or missing admin key." });
+  }
+
+  const avgMessagesPerSession =
+    analytics.totalConversationsStarted > 0
+      ? Math.round((analytics.totalMessages / analytics.totalConversationsStarted) * 10) / 10
+      : 0;
+
+  const totalDailyActiveUsers = Object.values(analytics.dailyActiveUsers).reduce(
+    (acc, users) => acc + users.length,
+    0
+  );
+
+  const topBirthDates = Object.entries(analytics.birthDates)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 10)
+    .map(([date, count]) => ({ date, count }));
+
+  res.json({
+    totalConversationsStarted: analytics.totalConversationsStarted,
+    totalMessages: analytics.totalMessages,
+    avgMessagesPerSession,
+    dailyActiveUsers: analytics.dailyActiveUsers,
+    totalUniqueActiveUsers: totalDailyActiveUsers,
+    topBirthDates,
+    timestamp: new Date().toISOString(),
+  });
+});
+
 // ── Landing page route ──
 app.get("/", (req, res) => {
   res.sendFile(join(__dirname, "public", "landing.html"));
@@ -1249,6 +1341,7 @@ function gracefulShutdown(signal) {
   isShuttingDown = true;
   console.error(`[nuta] ${signal} recu, arret en cours...`);
   saveSessions();
+  saveAnalytics();
   server.close(() => {
     console.error("[nuta] Serveur arrete proprement.");
     process.exit(0);
