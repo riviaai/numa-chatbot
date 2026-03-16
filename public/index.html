@@ -17,9 +17,12 @@
       --primary-dark: #5535E0;
       --primary-light: #8B6FFF;
       --bg: #F9F8FF;
+      --text: #0D0D0D;
       --success: #00C897;
       --error: #FF5C5C;
-      --white: #FFFFFF;
+      --warning: #FF8C00;
+      --surface: #F9F8FF;
+      --white: #F9F8FF;
       --gray-50: #F9FAFB;
       --gray-100: #F3F4F6;
       --gray-200: #E5E7EB;
@@ -41,7 +44,7 @@
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: var(--bg);
-      color: var(--gray-800);
+      color: var(--text);
       height: 100vh;
       height: 100dvh;
       display: flex;
@@ -155,18 +158,18 @@
     .lang-btn {
       background: rgba(255,255,255,0.25);
       border: 1.5px solid rgba(255,255,255,0.5);
-      border-radius: 8px;
-      padding: 6px 12px;
+      border-radius: 12px;
+      padding: 8px 14px;
       font-family: 'Inter', sans-serif;
-      font-size: 0.8rem;
+      font-size: 0.875rem;
       font-weight: 800;
       color: #fff;
       cursor: pointer;
       transition: all 0.2s;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      min-height: 34px;
-      min-width: 34px;
+      min-height: 44px;
+      min-width: 44px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -180,17 +183,17 @@
     .text-size-btn {
       background: rgba(255,255,255,0.25);
       border: 1.5px solid rgba(255,255,255,0.5);
-      border-radius: 8px;
-      padding: 6px 10px;
+      border-radius: 12px;
+      padding: 8px 12px;
       font-family: 'Inter', sans-serif;
-      font-size: 0.8rem;
+      font-size: 0.875rem;
       font-weight: 800;
       color: #fff;
       cursor: pointer;
       transition: all 0.2s;
       line-height: 1;
-      min-height: 34px;
-      min-width: 34px;
+      min-height: 44px;
+      min-width: 44px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -305,7 +308,7 @@
 
     .welcome p {
       color: var(--gray-500);
-      font-size: 0.88rem;
+      font-size: 1rem;
       line-height: 1.6;
       max-width: 380px;
       margin: 0 auto;
@@ -326,7 +329,7 @@
     .onboarding-label {
       font-size: 1rem;
       font-weight: 700;
-      color: var(--gray-800);
+      color: var(--text);
     }
 
     .onboarding-input {
@@ -340,8 +343,8 @@
       text-align: center;
       outline: none;
       transition: border-color 0.2s;
-      color: var(--gray-800);
-      background: var(--white);
+      color: var(--text);
+      background: var(--surface);
     }
 
     .onboarding-input:focus {
@@ -409,7 +412,7 @@
       border: 2px solid var(--gray-200);
       border-radius: 14px;
       font-family: 'Inter', sans-serif;
-      font-size: 0.78rem;
+      font-size: 0.875rem;
       font-weight: 600;
       color: var(--gray-700);
       cursor: pointer;
@@ -440,9 +443,9 @@
       background: var(--white);
       border: 1.5px solid var(--gray-200);
       border-radius: 20px;
-      padding: 8px 16px;
+      padding: 10px 18px;
       font-family: 'Inter', sans-serif;
-      font-size: 0.8rem;
+      font-size: 0.875rem;
       font-weight: 500;
       color: var(--gray-700);
       cursor: pointer;
@@ -500,7 +503,7 @@
       padding: 12px 16px;
       border-radius: 16px;
       line-height: 1.6;
-      font-size: 0.88rem;
+      font-size: 1rem;
       word-wrap: break-word;
       overflow-wrap: break-word;
       white-space: pre-wrap;
@@ -509,11 +512,11 @@
     }
 
     .message.bot .message-bubble {
-      background: var(--white);
+      background: var(--surface);
       border: 1px solid var(--gray-200);
       border-bottom-left-radius: 4px;
       box-shadow: 0 1px 6px rgba(0,0,0,0.06);
-      color: var(--gray-800);
+      color: var(--text);
     }
 
     .message.user .message-bubble {
@@ -579,19 +582,19 @@
       border: 1.5px solid var(--gray-200);
       border-radius: 22px;
       font-family: 'Inter', sans-serif;
-      font-size: 0.88rem;
+      font-size: 1rem;
       outline: none;
       resize: none;
       max-height: 120px;
       line-height: 1.45;
       transition: border-color 0.2s;
-      color: var(--gray-800);
+      color: var(--text);
       background: var(--gray-50);
     }
 
     #message-input:focus {
       border-color: var(--primary);
-      background: var(--white);
+      background: var(--surface);
       box-shadow: 0 0 0 3px rgba(108,71,255,0.1);
     }
 
@@ -620,8 +623,8 @@
     }
 
     .new-conv-btn {
-      width: 38px;
-      height: 38px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       border: 1.5px solid var(--gray-200);
       background: var(--white);
@@ -641,8 +644,8 @@
     }
 
     .share-btn {
-      width: 38px;
-      height: 38px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       border: 1.5px solid var(--gray-200);
       background: var(--white);
@@ -708,7 +711,7 @@
       border-top: 1px solid var(--gray-200);
       padding: 8px 16px;
       text-align: center;
-      font-size: 0.68rem;
+      font-size: 0.75rem;
       color: var(--gray-400);
       flex-shrink: 0;
     }
@@ -749,7 +752,7 @@
     }
 
     .cookie-banner p {
-      font-size: 0.8rem;
+      font-size: 0.875rem;
       color: var(--gray-600);
       max-width: 600px;
       line-height: 1.5;
@@ -758,10 +761,11 @@
     .cookie-banner a { color: var(--primary); text-decoration: underline; }
 
     .cookie-btn {
-      padding: 8px 20px;
-      border-radius: 8px;
+      padding: 10px 20px;
+      border-radius: 12px;
       font-family: 'Inter', sans-serif;
-      font-size: 0.8rem;
+      font-size: 0.875rem;
+      min-height: 44px;
       font-weight: 600;
       cursor: pointer;
       border: none;
@@ -804,27 +808,27 @@
       .header-text h1 { font-size: 1.05rem; }
       .header-right { right: 10px; gap: 6px; }
       .header-status { font-size: 0.6rem; }
-      .lang-btn { font-size: 0.75rem; padding: 5px 10px; min-height: 30px; min-width: 30px; }
-      .text-size-btn { font-size: 0.75rem; padding: 5px 8px; min-height: 30px; min-width: 30px; }
+      .lang-btn { font-size: 0.8rem; padding: 6px 10px; min-height: 44px; min-width: 44px; }
+      .text-size-btn { font-size: 0.8rem; padding: 6px 8px; min-height: 44px; min-width: 44px; }
       .message { max-width: 88%; }
-      .message-bubble { font-size: 0.84rem; padding: 10px 14px; }
+      .message-bubble { font-size: 0.9375rem; padding: 10px 14px; }
       .chat-area { padding: 12px; gap: 10px; }
       .welcome { padding: 20px 10px 16px; }
       .welcome-mascot { width: 72px; height: 72px; }
       .welcome h2 { font-size: 1.15rem; }
-      .welcome p { font-size: 0.82rem; }
+      .welcome p { font-size: 0.9375rem; }
       .suggestions { gap: 6px; }
-      .suggestion-btn { font-size: 0.75rem; padding: 7px 14px; }
+      .suggestion-btn { font-size: 0.8rem; padding: 8px 14px; }
       .input-area { padding: 8px 10px; gap: 8px; padding-bottom: max(8px, env(safe-area-inset-bottom)); }
-      #message-input { padding: 10px 14px; font-size: 0.85rem; border-radius: 20px; }
-      .send-btn { width: 40px; height: 40px; }
+      #message-input { padding: 10px 14px; font-size: 1rem; border-radius: 20px; }
+      .send-btn { width: 44px; height: 44px; }
       .legal-footer { display: none; }
       .cookie-banner { padding: 10px 14px; }
-      .cookie-banner p { font-size: 0.72rem; }
+      .cookie-banner p { font-size: 0.8rem; }
     }
 
     @media (max-width: 380px) {
-      .suggestion-btn { font-size: 0.7rem; padding: 5px 10px; }
+      .suggestion-btn { font-size: 0.8rem; padding: 6px 12px; }
       .welcome h2 { font-size: 1.05rem; }
       .message { max-width: 92%; }
       .header-status span { display: none; }
@@ -850,6 +854,127 @@
       .chat-area { padding: 28px 80px; max-width: 900px; margin: 0 auto; width: 100%; }
       .message { max-width: 65%; }
       .input-area { max-width: 900px; margin: 0 auto; width: 100%; padding: 16px 80px; }
+    }
+
+    /* ── Dark mode ── */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #111827;
+        --text: #F9F8FF;
+        --surface: #1F2937;
+        --white: #1F2937;
+        --gray-50: #1F2937;
+        --gray-100: #374151;
+        --gray-200: #4B5563;
+        --gray-300: #6B7280;
+        --gray-400: #9CA3AF;
+        --gray-500: #D1D5DB;
+        --gray-600: #E5E7EB;
+        --gray-700: #F3F4F6;
+        --gray-800: #F9FAFB;
+        --gray-900: #F9F8FF;
+        --accent-purple: rgba(108,71,255,0.2);
+        --shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
+        --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.3), 0 2px 4px -2px rgba(0,0,0,0.2);
+        --shadow-lg: 0 10px 25px -3px rgba(108,71,255,0.2), 0 4px 6px -4px rgba(0,0,0,0.2);
+      }
+
+      body { background: #111827; }
+
+      .header {
+        background: linear-gradient(135deg, #3D2399 0%, #5535E0 50%, #6C47FF 100%);
+      }
+
+      .chat-area {
+        background: linear-gradient(180deg, #1a1535 0%, #111827 30%);
+      }
+
+      .message.bot .message-bubble {
+        background: var(--surface);
+        border-color: var(--gray-200);
+        color: var(--text);
+      }
+
+      .message.user .message-bubble {
+        background: linear-gradient(135deg, #5535E0 0%, #6C47FF 100%);
+      }
+
+      .input-area {
+        background: #111827;
+        border-top-color: var(--gray-200);
+      }
+
+      #message-input {
+        background: var(--surface);
+        border-color: var(--gray-200);
+        color: var(--text);
+      }
+
+      #message-input:focus {
+        background: var(--surface);
+      }
+
+      .typing-dots {
+        background: var(--surface);
+        border-color: var(--gray-200);
+      }
+
+      .onboarding-input {
+        background: var(--surface);
+        border-color: var(--gray-200);
+        color: var(--text);
+      }
+
+      .suggestion-btn {
+        background: var(--surface);
+        border-color: var(--gray-200);
+        color: var(--text);
+      }
+
+      .interest-btn {
+        background: var(--surface);
+        border-color: var(--gray-200);
+        color: var(--text);
+      }
+
+      .cookie-banner {
+        background: var(--surface);
+        border-top-color: var(--gray-200);
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+      }
+
+      .legal-footer {
+        background: #111827;
+        border-top-color: var(--gray-200);
+      }
+
+      .lang-dropdown {
+        background: var(--surface);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      }
+
+      .lang-option {
+        color: var(--text);
+      }
+
+      .lang-option:hover {
+        background: var(--accent-purple);
+      }
+
+      .share-toast {
+        background: var(--surface);
+      }
+
+      .new-conv-btn, .share-btn {
+        background: var(--surface);
+        border-color: var(--gray-200);
+        color: var(--gray-400);
+      }
+
+      .info-card {
+        background: var(--surface);
+        border-color: var(--gray-200);
+      }
     }
   </style>
 </head>

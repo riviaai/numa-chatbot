@@ -9,27 +9,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        :root { --primary: #6C47FF; --bg: #F9F8FF; }
-        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1F2937; line-height: 1.7; background: #fafafa; -webkit-font-smoothing: antialiased; }
-        .navbar { background: #fff; border-bottom: 1px solid #E5E7EB; padding: 16px 0; position: sticky; top: 0; z-index: 100; }
+        :root { --primary: #6C47FF; --primary-dark: #5535E0; --bg: #F9F8FF; --text: #0D0D0D; --surface: #F9F8FF; --dark-bg: #111827; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: var(--text); line-height: 1.7; background: var(--bg); -webkit-font-smoothing: antialiased; }
+        .navbar { background: var(--surface); border-bottom: 1px solid #E5E7EB; padding: 16px 0; position: sticky; top: 0; z-index: 100; }
         .navbar-inner { max-width: 900px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; }
-        .navbar-logo { font-size: 1.3rem; font-weight: 800; color: #111827; text-decoration: none; padding: 8px 0; min-height: 44px; display: inline-flex; align-items: center; }
+        .navbar-logo { font-size: 1.3rem; font-weight: 800; color: var(--text); text-decoration: none; padding: 8px 0; min-height: 44px; display: inline-flex; align-items: center; }
         .navbar-logo span { color: var(--primary); }
-        .navbar-back { color: #6B7280; text-decoration: none; font-size: 0.88rem; padding: 10px 12px; min-height: 44px; display: inline-flex; align-items: center; }
-        .navbar-back:hover { color: #111827; }
+        .navbar-back { color: #6B7280; text-decoration: none; font-size: 1rem; padding: 10px 12px; min-height: 44px; display: inline-flex; align-items: center; transition: color 0.2s ease; }
+        .navbar-back:hover { color: var(--text); }
         .container { max-width: 900px; margin: 0 auto; padding: 48px 24px 80px; }
-        h1 { font-size: 2rem; font-weight: 800; margin-bottom: 8px; color: #111827; letter-spacing: -0.02em; }
-        .updated { color: #6B7280; font-size: 0.85rem; margin-bottom: 40px; }
-        h2 { font-size: 1.25rem; font-weight: 700; margin-top: 40px; margin-bottom: 12px; color: #111827; padding-bottom: 8px; border-bottom: 2px solid var(--primary); }
-        p, li { font-size: 0.92rem; color: #374151; margin-bottom: 12px; }
+        h1 { font-size: 2rem; font-weight: 800; margin-bottom: 8px; color: var(--text); letter-spacing: -0.02em; }
+        .updated { color: #6B7280; font-size: 0.875rem; margin-bottom: 40px; }
+        h2 { font-size: 1.25rem; font-weight: 700; margin-top: 40px; margin-bottom: 12px; color: var(--text); padding-bottom: 8px; border-bottom: 2px solid var(--primary); }
+        p, li { font-size: 1rem; color: #374151; margin-bottom: 12px; }
         ul { padding-left: 24px; margin-bottom: 16px; }
         li { margin-bottom: 6px; }
-        strong { color: #111827; }
-        a { color: var(--primary); }
-        .info-card { background: #fff; border: 1px solid #E5E7EB; border-radius: 12px; padding: 24px; margin: 16px 0; }
+        strong { color: var(--text); }
+        a { color: var(--primary); transition: color 0.2s ease; }
+        .info-card { background: var(--surface); border: 1px solid #E5E7EB; border-radius: 12px; padding: 24px; margin: 16px 0; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         .info-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 12px; color: var(--primary); }
-        .footer { background: #111827; color: rgba(255,255,255,0.5); padding: 32px 0; text-align: center; font-size: 0.78rem; margin-top: 60px; }
-        .footer a { color: rgba(255,255,255,0.5); text-decoration: underline; padding: 8px 4px; }
+        .footer { background: var(--dark-bg); color: rgba(255,255,255,0.5); padding: 32px 0; text-align: center; font-size: 0.8rem; margin-top: 60px; }
+        .footer a { color: rgba(255,255,255,0.5); text-decoration: underline; padding: 8px 4px; min-height: 44px; display: inline-flex; align-items: center; transition: color 0.2s ease; }
         .footer a:hover { color: rgba(255,255,255,0.8); }
         @media (max-width: 768px) {
             .container { padding: 32px 20px 60px; }
@@ -40,10 +40,25 @@
             .container { padding: 24px 16px 48px; }
             h1 { font-size: 1.3rem; }
             h2 { font-size: 1rem; margin-top: 28px; }
-            p, li { font-size: 0.85rem; }
+            p, li { font-size: 0.9375rem; }
             .info-card { padding: 16px; }
             .navbar-inner { padding: 0 16px; }
             .footer { padding: 24px 16px; }
+        }
+        /* ── Dark mode ── */
+        @media (prefers-color-scheme: dark) {
+            :root { --bg: #111827; --text: #F9F8FF; --surface: #1F2937; --dark-bg: #0D0F17; }
+            body { background: #111827; color: var(--text); }
+            .navbar { background: var(--surface); border-bottom-color: #374151; }
+            .navbar-logo { color: var(--text); }
+            .navbar-back { color: #9CA3AF; }
+            .navbar-back:hover { color: var(--text); }
+            h1, h2, strong { color: var(--text); }
+            p, li { color: #D1D5DB; }
+            .updated { color: #9CA3AF; }
+            .info-card { background: var(--surface); border-color: #374151; }
+            .footer { background: var(--dark-bg); }
+            a { color: #8B6FFF; }
         }
     </style>
 </head>
