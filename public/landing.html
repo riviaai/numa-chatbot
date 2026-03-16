@@ -104,6 +104,16 @@
       text-align: center;
       border-bottom: 1px solid rgba(255, 209, 102, 0.1);
       backdrop-filter: blur(10px);
+      position: relative;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      max-width: 1000px;
+      margin: 0 auto;
     }
 
     .logo {
@@ -121,6 +131,43 @@
       font-size: 14px;
       color: var(--text-muted);
       font-weight: 500;
+    }
+
+    .lang-toggle {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.15);
+      border: 1.5px solid rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      padding: 8px 16px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .lang-toggle:hover {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    @media (prefers-color-scheme: light) {
+      .lang-toggle {
+        background: rgba(108, 71, 255, 0.1);
+        border-color: rgba(108, 71, 255, 0.3);
+        color: var(--primary);
+      }
+      .lang-toggle:hover {
+        background: rgba(108, 71, 255, 0.2);
+      }
     }
 
     /* Hero Section */
@@ -448,95 +495,100 @@
   <div class="container">
     <!-- Header -->
     <header>
-      <div class="logo">Numa</div>
-      <div class="tagline">Numérologie Personnalisée par l'IA</div>
+      <div class="header-inner">
+        <div>
+          <div class="logo">Numa</div>
+          <div class="tagline" data-i18n="tagline">Num&eacute;rologie Personnalis&eacute;e par l'IA</div>
+        </div>
+        <button class="lang-toggle" id="langToggle" aria-label="Switch language">EN</button>
+      </div>
     </header>
 
     <!-- Hero Section -->
     <section class="hero">
-      <h1>Découvrez votre<br><span class="hero-accent">profil numérologique</span></h1>
-      <p>Entrez votre date de naissance pour une analyse complète et personnalisée de votre chemin de vie, pilotée par l'IA.</p>
+      <h1 data-i18n="hero_title">D&eacute;couvrez votre<br><span class="hero-accent">profil num&eacute;rologique</span></h1>
+      <p data-i18n="hero_desc">Entrez votre date de naissance pour une analyse compl&egrave;te et personnalis&eacute;e de votre chemin de vie, pilot&eacute;e par l'IA.</p>
       <a href="/chat" class="cta-button">
-        <span>Commencer mon analyse gratuite</span>
+        <span data-i18n="hero_cta">Commencer mon analyse gratuite</span>
       </a>
     </section>
 
     <!-- How It Works -->
     <section class="how-it-works">
-      <h2 class="section-title">Comment ça fonctionne</h2>
+      <h2 class="section-title" data-i18n="how_title">Comment &ccedil;a fonctionne</h2>
       <div class="steps">
         <div class="step">
           <div class="step-number">1</div>
-          <h3>Entrez votre date de naissance</h3>
-          <p>Partagez votre date et prénom pour commencer. C'est gratuit et sécurisé.</p>
+          <h3 data-i18n="step1_title">Entrez votre date de naissance</h3>
+          <p data-i18n="step1_desc">Partagez votre date et pr&eacute;nom pour commencer. C'est gratuit et s&eacute;curis&eacute;.</p>
         </div>
         <div class="step">
           <div class="step-number">2</div>
-          <h3>L'IA analyse votre profil</h3>
-          <p>Notre système calcule les nombres clés de votre numérologie personnelle.</p>
+          <h3 data-i18n="step2_title">L'IA analyse votre profil</h3>
+          <p data-i18n="step2_desc">Notre syst&egrave;me calcule les nombres cl&eacute;s de votre num&eacute;rologie personnelle.</p>
         </div>
         <div class="step">
           <div class="step-number">3</div>
-          <h3>Recevez votre analyse</h3>
-          <p>Découvrez des insights profonds sur votre personnalité et votre destinée.</p>
+          <h3 data-i18n="step3_title">Recevez votre analyse</h3>
+          <p data-i18n="step3_desc">D&eacute;couvrez des insights profonds sur votre personnalit&eacute; et votre destin&eacute;e.</p>
         </div>
       </div>
     </section>
 
     <!-- What You'll Discover -->
     <section class="features">
-      <h2 class="section-title">Qu'allez-vous découvrir</h2>
+      <h2 class="section-title" data-i18n="features_title">Qu'allez-vous d&eacute;couvrir</h2>
       <div class="features-grid">
         <div class="feature-card">
-          <div class="feature-icon">127</div>
-          <h4>Chemin de vie</h4>
-          <p>Votre mission principale et les défis que vous rencontrerez.</p>
+          <div class="feature-icon">&#127;</div>
+          <h4 data-i18n="feat1_title">Chemin de vie</h4>
+          <p data-i18n="feat1_desc">Votre mission principale et les d&eacute;fis que vous rencontrerez.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">165</div>
-          <h4>Nombre d'expression</h4>
-          <p>Vos talents naturels et votre façon de vous exprimer.</p>
+          <div class="feature-icon">&#165;</div>
+          <h4 data-i18n="feat2_title">Nombre d'expression</h4>
+          <p data-i18n="feat2_desc">Vos talents naturels et votre fa&ccedil;on de vous exprimer.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">147</div>
-          <h4>Compatibilités</h4>
-          <p>Comment vous harmonisez avec les autres.</p>
+          <div class="feature-icon">&#147;</div>
+          <h4 data-i18n="feat3_title">Compatibilit&eacute;s</h4>
+          <p data-i18n="feat3_desc">Comment vous harmonisez avec les autres.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">175</div>
-          <h4>Prévisions</h4>
-          <p>Les cycles à venir et les opportunités.</p>
+          <div class="feature-icon">&#175;</div>
+          <h4 data-i18n="feat4_title">Pr&eacute;visions</h4>
+          <p data-i18n="feat4_desc">Les cycles &agrave; venir et les opportunit&eacute;s.</p>
         </div>
       </div>
     </section>
 
     <!-- CTA Section -->
     <section class="cta-section">
-      <h2>Prêt à explorer votre numérologie</h2>
-      <p>Commencez votre voyage de découverte personnelle. Réponses instantanées alimentées par l'IA.</p>
+      <h2 data-i18n="cta_title">Pr&ecirc;t &agrave; explorer votre num&eacute;rologie</h2>
+      <p data-i18n="cta_desc">Commencez votre voyage de d&eacute;couverte personnelle. R&eacute;ponses instantan&eacute;es aliment&eacute;es par l'IA.</p>
       <a href="/chat" class="cta-button">
-        <span>Lancer mon analyse</span>
+        <span data-i18n="cta_btn">Lancer mon analyse</span>
       </a>
     </section>
 
     <!-- Footer -->
     <footer>
       <div class="footer-links">
-        <a href="/privacy.html">Confidentialité</a>
-        <a href="/terms.html">Conditions d'utilisation</a>
-        <a href="/legal.html">Mentions légales</a>
+        <a href="/privacy.html" data-i18n="footer_privacy">Confidentialit&eacute;</a>
+        <a href="/terms.html" data-i18n="footer_terms">Conditions d'utilisation</a>
+        <a href="/legal.html" data-i18n="footer_legal">Mentions l&eacute;gales</a>
       </div>
-      <p>Numa par Steven Bos. Créé avec passion pour votre développement personnel.</p>
+      <p data-i18n="footer_credit">Numa par Steven Bos. Cr&eacute;&eacute; avec passion pour votre d&eacute;veloppement personnel.</p>
     </footer>
   </div>
 
   <script>
     // Generate random stars
-    const bgStars = document.getElementById('bgStars');
-    const starCount = Math.min(window.innerWidth / 50, 100);
+    var bgStars = document.getElementById('bgStars');
+    var starCount = Math.min(window.innerWidth / 50, 100);
 
-    for (let i = 0; i < starCount; i++) {
-      const star = document.createElement('div');
+    for (var i = 0; i < starCount; i++) {
+      var star = document.createElement('div');
       star.className = 'star';
       star.style.width = Math.random() * 2 + 1 + 'px';
       star.style.height = star.style.width;
@@ -545,6 +597,95 @@
       star.style.animationDelay = Math.random() * 3 + 's';
       bgStars.appendChild(star);
     }
+
+    // ── i18n ──
+    var translations = {
+      fr: {
+        tagline: "Num\u00e9rologie Personnalis\u00e9e par l'IA",
+        hero_title: 'D\u00e9couvrez votre<br><span class="hero-accent">profil num\u00e9rologique</span>',
+        hero_desc: "Entrez votre date de naissance pour une analyse compl\u00e8te et personnalis\u00e9e de votre chemin de vie, pilot\u00e9e par l'IA.",
+        hero_cta: 'Commencer mon analyse gratuite',
+        how_title: 'Comment \u00e7a fonctionne',
+        step1_title: 'Entrez votre date de naissance',
+        step1_desc: "Partagez votre date et pr\u00e9nom pour commencer. C'est gratuit et s\u00e9curis\u00e9.",
+        step2_title: "L'IA analyse votre profil",
+        step2_desc: 'Notre syst\u00e8me calcule les nombres cl\u00e9s de votre num\u00e9rologie personnelle.',
+        step3_title: 'Recevez votre analyse',
+        step3_desc: 'D\u00e9couvrez des insights profonds sur votre personnalit\u00e9 et votre destin\u00e9e.',
+        features_title: "Qu'allez-vous d\u00e9couvrir",
+        feat1_title: 'Chemin de vie',
+        feat1_desc: 'Votre mission principale et les d\u00e9fis que vous rencontrerez.',
+        feat2_title: "Nombre d'expression",
+        feat2_desc: 'Vos talents naturels et votre fa\u00e7on de vous exprimer.',
+        feat3_title: 'Compatibilit\u00e9s',
+        feat3_desc: 'Comment vous harmonisez avec les autres.',
+        feat4_title: 'Pr\u00e9visions',
+        feat4_desc: 'Les cycles \u00e0 venir et les opportunit\u00e9s.',
+        cta_title: 'Pr\u00eat \u00e0 explorer votre num\u00e9rologie',
+        cta_desc: "Commencez votre voyage de d\u00e9couverte personnelle. R\u00e9ponses instantan\u00e9es aliment\u00e9es par l'IA.",
+        cta_btn: 'Lancer mon analyse',
+        footer_privacy: 'Confidentialit\u00e9',
+        footer_terms: "Conditions d'utilisation",
+        footer_legal: 'Mentions l\u00e9gales',
+        footer_credit: 'Numa par Steven Bos. Cr\u00e9\u00e9 avec passion pour votre d\u00e9veloppement personnel.'
+      },
+      en: {
+        tagline: 'AI-Powered Personal Numerology',
+        hero_title: 'Discover your<br><span class="hero-accent">numerology profile</span>',
+        hero_desc: 'Enter your date of birth for a complete and personalized analysis of your life path, powered by AI.',
+        hero_cta: 'Start my free analysis',
+        how_title: 'How it works',
+        step1_title: 'Enter your date of birth',
+        step1_desc: 'Share your date and first name to get started. Free and secure.',
+        step2_title: 'AI analyzes your profile',
+        step2_desc: 'Our system calculates the key numbers of your personal numerology.',
+        step3_title: 'Receive your analysis',
+        step3_desc: 'Discover deep insights about your personality and destiny.',
+        features_title: "What you'll discover",
+        feat1_title: 'Life path',
+        feat1_desc: 'Your main mission and the challenges you will face.',
+        feat2_title: 'Expression number',
+        feat2_desc: 'Your natural talents and the way you express yourself.',
+        feat3_title: 'Compatibility',
+        feat3_desc: 'How you harmonize with others.',
+        feat4_title: 'Forecasts',
+        feat4_desc: 'Upcoming cycles and opportunities.',
+        cta_title: 'Ready to explore your numerology',
+        cta_desc: 'Start your personal discovery journey. Instant AI-powered answers.',
+        cta_btn: 'Start my analysis',
+        footer_privacy: 'Privacy',
+        footer_terms: 'Terms of use',
+        footer_legal: 'Legal notice',
+        footer_credit: 'Numa by Steven Bos. Created with passion for your personal growth.'
+      }
+    };
+
+    var currentLang = 'fr';
+    try {
+      var stored = localStorage.getItem('nuta_lang');
+      if (stored === 'en') currentLang = 'en';
+    } catch(e) {}
+
+    function applyLang(lang) {
+      currentLang = lang;
+      try { localStorage.setItem('nuta_lang', lang); } catch(e) {}
+      document.documentElement.lang = lang;
+      document.getElementById('langToggle').textContent = lang === 'fr' ? 'EN' : 'FR';
+
+      var dict = translations[lang];
+      document.querySelectorAll('[data-i18n]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n');
+        if (dict[key]) el.innerHTML = dict[key];
+      });
+    }
+
+    // Apply on load
+    applyLang(currentLang);
+
+    // Toggle button
+    document.getElementById('langToggle').addEventListener('click', function() {
+      applyLang(currentLang === 'fr' ? 'en' : 'fr');
+    });
   </script>
 </body>
 </html>
