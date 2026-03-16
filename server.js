@@ -1208,16 +1208,26 @@ app.get("/health/ready", (req, res) => {
   res.json({ status: "ready" });
 });
 
-// ── SPA fallback: serve index.html for unmatched routes ──
+// ── Landing page route ──
+app.get("/", (req, res) => {
+  res.sendFile(join(__dirname, "public", "landing.html"));
+});
+
+// ── Chat page route ──
+app.get("/chat", (req, res) => {
+  res.sendFile(join(__dirname, "public", "chat.html"));
+});
+
+// ── Catch-all for other routes ──
 app.get("*", (req, res) => {
-  // Serve specific HTML files if they exist, otherwise index
+  // Serve specific HTML files if they exist, otherwise chat
   const htmlPath = join(__dirname, "public", req.path);
   if (req.path.endsWith(".html")) {
     return res.sendFile(htmlPath, (err) => {
-      if (err) res.sendFile(join(__dirname, "public", "index.html"));
+      if (err) res.sendFile(join(__dirname, "public", "chat.html"));
     });
   }
-  res.sendFile(join(__dirname, "public", "index.html"));
+  res.sendFile(join(__dirname, "public", "chat.html"));
 });
 
 // ── Global error handler ──

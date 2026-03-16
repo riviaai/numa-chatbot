@@ -1,0 +1,1844 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Nuta, votre guide intelligente en num&eacute;rologie. D&eacute;couvrez votre chemin de vie, nombre d'expression et plus encore.">
+  <meta name="theme-color" content="#6C47FF">
+  <title>Nuta &mdash; Votre guide en num&eacute;rologie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --primary: #6C47FF;
+      --primary-dark: #5535E0;
+      --primary-light: #8B6FFF;
+      --bg: #F9F8FF;
+      --text: #0D0D0D;
+      --success: #00C897;
+      --error: #FF5C5C;
+      --warning: #FF8C00;
+      --surface: #F9F8FF;
+      --white: #F9F8FF;
+      --gray-50: #F9FAFB;
+      --gray-100: #F3F4F6;
+      --gray-200: #E5E7EB;
+      --gray-300: #D1D5DB;
+      --gray-400: #9CA3AF;
+      --gray-500: #6B7280;
+      --gray-600: #4B5563;
+      --gray-700: #374151;
+      --gray-800: #1F2937;
+      --gray-900: #111827;
+      --accent-purple: #E8DEFF;
+      --accent-gold: #FFD166;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+      --shadow-lg: 0 10px 25px -3px rgba(108,71,255,0.12), 0 4px 6px -4px rgba(0,0,0,0.05);
+      --radius: 12px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: linear-gradient(135deg, #5535E0 0%, #6C47FF 50%, #8B6FFF 100%);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+      z-index: 10;
+      flex-shrink: 0;
+      box-shadow: 0 2px 12px rgba(108,71,255,0.2);
+    }
+
+    .header-home {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: opacity 0.2s;
+    }
+    .header-home:hover { opacity: 0.85; }
+    .header-home:active { opacity: 0.7; }
+
+    .mascot-container {
+      position: relative;
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+    }
+
+    .mascot {
+      width: 48px;
+      height: 48px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+
+    .mascot-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60px;
+      height: 60px;
+      background: radial-gradient(circle, rgba(108,71,255,0.15), transparent 70%);
+      border-radius: 50%;
+      animation: pulse-glow 2.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+      50% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+    }
+
+    .header-text h1 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--white);
+      letter-spacing: -0.02em;
+    }
+
+    .header-text h1 span {
+      color: var(--white);
+    }
+
+    .header-text p {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.8);
+      font-weight: 500;
+    }
+
+    .header-right {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.7rem;
+      color: #FFFFFF;
+      font-weight: 600;
+    }
+
+    .lang-switcher {
+      position: relative;
+    }
+
+    .lang-btn {
+      background: rgba(255,255,255,0.25);
+      border: 1.5px solid rgba(255,255,255,0.5);
+      border-radius: 12px;
+      padding: 8px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 800;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      min-height: 44px;
+      min-width: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .lang-btn:hover { background: rgba(255,255,255,0.5); }
+
+    .text-size-btn {
+      background: rgba(255,255,255,0.25);
+      border: 1.5px solid rgba(255,255,255,0.5);
+      border-radius: 12px;
+      padding: 8px 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 800;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
+      line-height: 1;
+      min-height: 44px;
+      min-width: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .text-size-btn:hover { background: rgba(255,255,255,0.5); }
+
+    body.text-lg .message-bubble { font-size: 1.05rem !important; line-height: 1.7 !important; }
+    body.text-lg .onboarding-label { font-size: 1.15rem !important; }
+    body.text-lg .onboarding-input { font-size: 1.1rem !important; }
+    body.text-lg .interest-btn { font-size: 0.92rem !important; }
+    body.text-lg #message-input { font-size: 1rem !important; }
+
+    body.text-xl .message-bubble { font-size: 1.2rem !important; line-height: 1.75 !important; }
+    body.text-xl .onboarding-label { font-size: 1.3rem !important; }
+    body.text-xl .onboarding-input { font-size: 1.2rem !important; }
+    body.text-xl .interest-btn { font-size: 1.05rem !important; }
+    body.text-xl #message-input { font-size: 1.15rem !important; }
+
+    .lang-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: var(--white);
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      overflow: hidden;
+      z-index: 100;
+      min-width: 120px;
+    }
+
+    .lang-dropdown.open { display: block; }
+
+    .lang-option {
+      display: block;
+      width: 100%;
+      padding: 8px 14px;
+      border: none;
+      background: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--gray-700);
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+
+    .lang-option:hover { background: var(--accent-purple); color: var(--primary); }
+    .lang-option.active { color: var(--primary); font-weight: 700; }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--success);
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(0,200,151,0.6);
+      animation: status-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes status-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* ── Chat area ── */
+    .chat-area {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: linear-gradient(180deg, #F3F0FF 0%, var(--bg) 30%);
+      scroll-behavior: smooth;
+    }
+
+    .chat-area::-webkit-scrollbar { width: 5px; }
+    .chat-area::-webkit-scrollbar-track { background: transparent; }
+    .chat-area::-webkit-scrollbar-thumb { background: rgba(108,71,255,0.2); border-radius: 3px; }
+    .chat-area::-webkit-scrollbar-thumb:hover { background: rgba(108,71,255,0.35); }
+
+    /* ── Welcome ── */
+    .welcome {
+      text-align: center;
+      padding: 40px 16px 20px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .welcome-mascot {
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 20px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .welcome h2 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--gray-900);
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .welcome h2 span { color: var(--primary); }
+
+    .welcome p {
+      color: var(--gray-500);
+      font-size: 1rem;
+      line-height: 1.6;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+
+    /* ── Onboarding ── */
+    .onboarding-step {
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .onboarding-step.hidden { display: none; }
+
+    .onboarding-label {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .onboarding-input {
+      width: 100%;
+      max-width: 280px;
+      padding: 12px 16px;
+      border: 2px solid var(--gray-200);
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.2s;
+      color: var(--text);
+      background: var(--surface);
+    }
+
+    .onboarding-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(108,71,255,0.1);
+    }
+
+    .onboard-hint {
+      font-size: 0.75rem;
+      color: var(--gray-400);
+      font-weight: 500;
+    }
+
+    .onboard-hint.error {
+      color: var(--error);
+    }
+
+    .onboarding-input.input-error {
+      border-color: var(--error);
+      animation: shake 0.3s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+
+    .onboarding-btn {
+      padding: 12px 32px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: var(--white);
+      border: none;
+      border-radius: 25px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(108,71,255,0.3);
+    }
+
+    .onboarding-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(108,71,255,0.4);
+    }
+
+    .onboarding-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .interest-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      width: 100%;
+      max-width: 340px;
+    }
+
+    .interest-btn {
+      padding: 14px 10px;
+      background: var(--white);
+      border: 2px solid var(--gray-200);
+      border-radius: 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--gray-700);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    .interest-btn:hover {
+      border-color: var(--primary);
+      background: var(--accent-purple);
+      color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* ── Suggestions ── */
+    .suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 24px;
+      padding: 0 8px;
+    }
+
+    .suggestion-btn {
+      background: var(--white);
+      border: 1.5px solid var(--gray-200);
+      border-radius: 20px;
+      padding: 10px 18px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--gray-700);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .suggestion-btn:hover {
+      background: var(--primary);
+      color: var(--white);
+      border-color: var(--primary);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* ── Messages ── */
+    .message {
+      display: flex;
+      gap: 10px;
+      max-width: 80%;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message.bot { align-self: flex-start; }
+    .message.user { align-self: flex-end; flex-direction: row-reverse; }
+
+    .message-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .message.bot .message-avatar {
+      background: var(--accent-purple);
+    }
+
+    .message.user .message-avatar {
+      background: var(--primary);
+      color: var(--white);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .message-bubble {
+      padding: 12px 16px;
+      border-radius: 16px;
+      line-height: 1.6;
+      font-size: 1rem;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      white-space: pre-wrap;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .message.bot .message-bubble {
+      background: var(--surface);
+      border: 1px solid var(--gray-200);
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+      color: var(--text);
+    }
+
+    .message.user .message-bubble {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: var(--white);
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 2px 8px rgba(108,71,255,0.3);
+    }
+
+    /* ── Typing indicator ── */
+    .typing {
+      display: flex;
+      gap: 10px;
+      align-self: flex-start;
+      max-width: 80%;
+    }
+
+    .typing-dots {
+      background: var(--white);
+      border: 1px solid var(--gray-100);
+      border-radius: 16px;
+      border-bottom-left-radius: 4px;
+      padding: 14px 20px;
+      display: flex;
+      gap: 5px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .typing-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      animation: bounce 1.2s ease-in-out infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.15s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.3; }
+      30% { transform: translateY(-6px); opacity: 1; }
+    }
+
+    /* ── Input area ── */
+    .input-area {
+      padding: 12px 16px;
+      background: var(--white);
+      border-top: 1px solid var(--gray-200);
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      flex-shrink: 0;
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
+      position: relative;
+      z-index: 5;
+    }
+
+    .input-wrapper { flex: 1; position: relative; }
+
+    #message-input {
+      width: 100%;
+      padding: 11px 16px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 22px;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      outline: none;
+      resize: none;
+      max-height: 120px;
+      line-height: 1.45;
+      transition: border-color 0.2s;
+      color: var(--text);
+      background: var(--gray-50);
+    }
+
+    #message-input:focus {
+      border-color: var(--primary);
+      background: var(--surface);
+      box-shadow: 0 0 0 3px rgba(108,71,255,0.1);
+    }
+
+    #message-input::placeholder { color: var(--gray-400); }
+
+    .send-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: var(--white);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(108,71,255,0.3);
+    }
+
+    .send-btn:hover {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(108,71,255,0.4);
+    }
+
+    .new-conv-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1.5px solid var(--gray-200);
+      background: var(--white);
+      color: var(--gray-500);
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .new-conv-btn.visible { display: flex; }
+    .new-conv-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--accent-purple);
+    }
+
+    .share-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1.5px solid var(--gray-200);
+      background: var(--white);
+      color: var(--gray-500);
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .share-btn.visible { display: flex; }
+    .share-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--accent-purple);
+    }
+
+    .share-toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--gray-800);
+      color: var(--white);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 100;
+      pointer-events: none;
+    }
+    .share-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .send-btn:active { transform: scale(0.95); }
+
+    .send-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* ── Markdown in messages ── */
+    .message-bubble strong, .message-bubble b {
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .message.user .message-bubble strong,
+    .message.user .message-bubble b {
+      color: var(--accent-gold);
+    }
+
+    /* ── Footer ── */
+    .legal-footer {
+      background: var(--white);
+      border-top: 1px solid var(--gray-200);
+      padding: 8px 16px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--gray-400);
+      flex-shrink: 0;
+    }
+
+    .legal-footer a {
+      color: var(--gray-500);
+      text-decoration: none;
+      padding: 4px 6px;
+      transition: color 0.2s;
+    }
+
+    .legal-footer a:hover { color: var(--primary); text-decoration: underline; }
+    .legal-footer .sep { margin: 0 2px; }
+
+    /* ── Cookie banner ── */
+    .cookie-banner {
+      background: var(--white);
+      border-top: 1px solid var(--gray-200);
+      padding: 12px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-shrink: 0;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+      animation: slideUp 0.3s ease;
+      position: fixed;
+      bottom: 70px;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .cookie-banner p {
+      font-size: 0.875rem;
+      color: var(--gray-600);
+      max-width: 600px;
+      line-height: 1.5;
+    }
+
+    .cookie-banner a { color: var(--primary); text-decoration: underline; }
+
+    .cookie-btn {
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      min-height: 44px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .cookie-btn-accept {
+      background: var(--primary);
+      color: var(--white);
+    }
+
+    .cookie-btn-accept:hover { background: var(--primary-dark); }
+
+    .cookie-btn-refuse {
+      background: var(--gray-100);
+      color: var(--gray-700);
+    }
+
+    .cookie-btn-refuse:hover { background: var(--gray-200); }
+
+    .cookie-banner.hidden { display: none; }
+
+    /* ── Focus visible ── */
+    .suggestion-btn:focus-visible,
+    .send-btn:focus-visible,
+    .cookie-btn:focus-visible {
+      outline: 3px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    #message-input:focus-visible {
+      outline: none;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .header { padding: 12px 16px; gap: 10px; }
+      .mascot-container { width: 40px; height: 40px; }
+      .mascot { width: 40px; height: 40px; }
+      .header-text h1 { font-size: 1.05rem; }
+      .header-right { right: 10px; gap: 6px; }
+      .header-status { font-size: 0.6rem; }
+      .lang-btn { font-size: 0.8rem; padding: 6px 10px; min-height: 44px; min-width: 44px; }
+      .text-size-btn { font-size: 0.8rem; padding: 6px 8px; min-height: 44px; min-width: 44px; }
+      .message { max-width: 88%; }
+      .message-bubble { font-size: 0.9375rem; padding: 10px 14px; }
+      .chat-area { padding: 12px; gap: 10px; }
+      .welcome { padding: 20px 10px 16px; }
+      .welcome-mascot { width: 72px; height: 72px; }
+      .welcome h2 { font-size: 1.15rem; }
+      .welcome p { font-size: 0.9375rem; }
+      .suggestions { gap: 6px; }
+      .suggestion-btn { font-size: 0.8rem; padding: 8px 14px; }
+      .input-area { padding: 8px 10px; gap: 8px; padding-bottom: max(8px, env(safe-area-inset-bottom)); }
+      #message-input { padding: 10px 14px; font-size: 1rem; border-radius: 20px; }
+      .send-btn { width: 44px; height: 44px; }
+      .legal-footer { display: none; }
+      .cookie-banner { padding: 10px 14px; }
+      .cookie-banner p { font-size: 0.8rem; }
+    }
+
+    @media (max-width: 380px) {
+      .suggestion-btn { font-size: 0.8rem; padding: 6px 12px; }
+      .welcome h2 { font-size: 1.05rem; }
+      .message { max-width: 92%; }
+      .header-status span { display: none; }
+      .header-right { gap: 4px; }
+      .interest-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Tablet / larger screens */
+    @media (min-width: 768px) {
+      .chat-area { padding: 24px 40px; }
+      .message { max-width: 70%; }
+      .welcome { padding: 48px 20px 24px; }
+      .welcome-mascot { width: 100px; height: 100px; }
+      .welcome h2 { font-size: 1.5rem; }
+      .welcome p { font-size: 0.95rem; max-width: 460px; }
+      .input-area { padding: 14px 24px; }
+      .onboarding-input { max-width: 320px; }
+      .interest-grid { max-width: 400px; }
+    }
+
+    /* Desktop */
+    @media (min-width: 1024px) {
+      .chat-area { padding: 28px 80px; max-width: 900px; margin: 0 auto; width: 100%; }
+      .message { max-width: 65%; }
+      .input-area { max-width: 900px; margin: 0 auto; width: 100%; padding: 16px 80px; }
+    }
+
+    /* ── Dark mode ── */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #111827;
+        --text: #F9F8FF;
+        --surface: #1F2937;
+        --white: #1F2937;
+        --gray-50: #1F2937;
+        --gray-100: #374151;
+        --gray-200: #4B5563;
+        --gray-300: #6B7280;
+        --gray-400: #9CA3AF;
+        --gray-500: #D1D5DB;
+        --gray-600: #E5E7EB;
+        --gray-700: #F3F4F6;
+        --gray-800: #F9FAFB;
+        --gray-900: #F9F8FF;
+        --accent-purple: rgba(108,71,255,0.2);
+        --shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
+        --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.3), 0 2px 4px -2px rgba(0,0,0,0.2);
+        --shadow-lg: 0 10px 25px -3px rgba(108,71,255,0.2), 0 4px 6px -4px rgba(0,0,0,0.2);
+      }
+
+      body { background: #111827; }
+
+      .header {
+        background: linear-gradient(135deg, #3D2399 0%, #5535E0 50%, #6C47FF 100%);
+      }
+
+      .chat-area {
+        background: linear-gradient(180deg, #1a1535 0%, #111827 30%);
+      }
+
+      .message.bot .message-bubble {
+        background: var(--surface);
+        border-color: var(--gray-200);
+        color: var(--text);
+      }
+
+      .message.user .message-bubble {
+        background: linear-gradient(135deg, #5535E0 0%, #6C47FF 100%);
+      }
+
+      .input-area {
+        background: #111827;
+        border-top-color: var(--gray-200);
+      }
+
+      #message-input {
+        background: var(--surface);
+        border-color: var(--gray-200);
+        color: var(--text);
+      }
+
+      #message-input:focus {
+        background: var(--surface);
+      }
+
+      .typing-dots {
+        background: var(--surface);
+        border-color: var(--gray-200);
+      }
+
+      .onboarding-input {
+        background: var(--surface);
+        border-color: var(--gray-200);
+        color: var(--text);
+      }
+
+      .suggestion-btn {
+        background: var(--surface);
+        border-color: var(--gray-200);
+        color: var(--text);
+      }
+
+      .interest-btn {
+        background: var(--surface);
+        border-color: var(--gray-200);
+        color: var(--text);
+      }
+
+      .cookie-banner {
+        background: var(--surface);
+        border-top-color: var(--gray-200);
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+      }
+
+      .legal-footer {
+        background: #111827;
+        border-top-color: var(--gray-200);
+      }
+
+      .lang-dropdown {
+        background: var(--surface);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      }
+
+      .lang-option {
+        color: var(--text);
+      }
+
+      .lang-option:hover {
+        background: var(--accent-purple);
+      }
+
+      .share-toast {
+        background: var(--surface);
+      }
+
+      .new-conv-btn, .share-btn {
+        background: var(--surface);
+        border-color: var(--gray-200);
+        color: var(--gray-400);
+      }
+
+      .info-card {
+        background: var(--surface);
+        border-color: var(--gray-200);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header" role="banner">
+    <div class="header-home" id="header-home" role="button" tabindex="0" aria-label="Nouvelle conversation">
+    <div class="mascot-container">
+      <div class="mascot-glow"></div>
+      <svg class="mascot" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <ellipse cx="50" cy="62" rx="28" ry="30" fill="#E8DEFF" stroke="#6C47FF" stroke-width="2"/>
+        <ellipse cx="50" cy="68" rx="16" ry="18" fill="white" opacity="0.5"/>
+        <circle cx="50" cy="32" r="22" fill="#E8DEFF" stroke="#6C47FF" stroke-width="2"/>
+        <ellipse cx="42" cy="30" rx="4" ry="4.5" fill="#1F2937"/>
+        <ellipse cx="58" cy="30" rx="4" ry="4.5" fill="#1F2937"/>
+        <circle cx="43.5" cy="28.5" r="1.5" fill="white"/>
+        <circle cx="59.5" cy="28.5" r="1.5" fill="white"/>
+        <ellipse cx="36" cy="36" rx="5" ry="3" fill="#FFB5C5" opacity="0.5"/>
+        <ellipse cx="64" cy="36" rx="5" ry="3" fill="#FFB5C5" opacity="0.5"/>
+        <path d="M 44 37 Q 50 43 56 37" stroke="#1F2937" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M 30 22 L 50 -2 L 70 22" fill="#6C47FF" stroke="#5535E0" stroke-width="1.5"/>
+        <ellipse cx="50" cy="22" rx="22" ry="5" fill="#5535E0"/>
+        <polygon points="50,4 52,9 57,9 53,12 54,17 50,14 46,17 47,12 43,9 48,9" fill="#FFD166"/>
+        <path d="M 24 55 Q 14 50 18 42" stroke="#6C47FF" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M 76 55 Q 86 50 82 42" stroke="#6C47FF" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <line x1="82" y1="42" x2="90" y2="28" stroke="#FFD166" stroke-width="2.5" stroke-linecap="round"/>
+        <polygon points="90,28 92,24 88,24" fill="#FFD166"/>
+        <circle cx="92" cy="22" r="1.5" fill="#FFD166" opacity="0.8"><animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite"/></circle>
+        <circle cx="86" cy="24" r="1" fill="#6C47FF" opacity="0.6"><animate attributeName="opacity" values="0.2;0.8;0.2" dur="2s" repeatCount="indefinite"/></circle>
+        <circle cx="94" cy="28" r="1" fill="#FF5C5C" opacity="0.7"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.8s" repeatCount="indefinite"/></circle>
+        <circle cx="18" cy="40" r="5" fill="#E8DEFF" stroke="#6C47FF" stroke-width="1"/>
+        <text x="18" y="43" text-anchor="middle" font-size="7" font-weight="bold" fill="#6C47FF">7</text>
+      </svg>
+    </div>
+    <div class="header-text">
+      <h1><span>Nuta</span></h1>
+      <p>Ta guide en num&eacute;rologie</p>
+    </div>
+    </div><!-- end header-home -->
+    <div class="header-right">
+      <div class="header-status" aria-live="polite">
+        <div class="status-dot"></div>
+        <span id="status-text">En ligne</span>
+      </div>
+      <button class="text-size-btn" id="text-size-btn" title="Taille du texte">A+</button>
+      <div class="lang-switcher">
+        <button class="lang-btn" id="lang-btn">FR</button>
+        <div class="lang-dropdown" id="lang-dropdown">
+          <button class="lang-option" data-lang="fr">Fran&ccedil;ais</button>
+          <button class="lang-option" data-lang="en">English</button>
+          <button class="lang-option" data-lang="es">Espa&ntilde;ol</button>
+          <button class="lang-option" data-lang="de">Deutsch</button>
+          <button class="lang-option" data-lang="it">Italiano</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Chat -->
+  <main class="chat-area" id="chat-area" role="log" aria-live="polite" aria-label="Conversation avec Nuta">
+    <div class="welcome" id="welcome">
+      <svg class="welcome-mascot" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <ellipse cx="50" cy="62" rx="28" ry="30" fill="#E8DEFF" stroke="#6C47FF" stroke-width="2"/>
+        <ellipse cx="50" cy="68" rx="16" ry="18" fill="white" opacity="0.5"/>
+        <circle cx="50" cy="32" r="22" fill="#E8DEFF" stroke="#6C47FF" stroke-width="2"/>
+        <ellipse cx="42" cy="30" rx="4" ry="4.5" fill="#1F2937"/>
+        <ellipse cx="58" cy="30" rx="4" ry="4.5" fill="#1F2937"/>
+        <circle cx="43.5" cy="28.5" r="1.5" fill="white"/>
+        <circle cx="59.5" cy="28.5" r="1.5" fill="white"/>
+        <ellipse cx="36" cy="36" rx="5" ry="3" fill="#FFB5C5" opacity="0.5"/>
+        <ellipse cx="64" cy="36" rx="5" ry="3" fill="#FFB5C5" opacity="0.5"/>
+        <path d="M 44 37 Q 50 43 56 37" stroke="#1F2937" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M 30 22 L 50 -2 L 70 22" fill="#6C47FF" stroke="#5535E0" stroke-width="1.5"/>
+        <ellipse cx="50" cy="22" rx="22" ry="5" fill="#5535E0"/>
+        <polygon points="50,4 52,9 57,9 53,12 54,17 50,14 46,17 47,12 43,9 48,9" fill="#FFD166"/>
+        <path d="M 24 55 Q 14 50 18 42" stroke="#6C47FF" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M 76 55 Q 86 50 82 42" stroke="#6C47FF" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <line x1="82" y1="42" x2="90" y2="28" stroke="#FFD166" stroke-width="2.5" stroke-linecap="round"/>
+        <polygon points="90,28 92,24 88,24" fill="#FFD166"/>
+        <circle cx="92" cy="22" r="1.5" fill="#FFD166" opacity="0.8"><animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite"/></circle>
+        <circle cx="86" cy="24" r="1" fill="#6C47FF" opacity="0.6"><animate attributeName="opacity" values="0.2;0.8;0.2" dur="2s" repeatCount="indefinite"/></circle>
+        <circle cx="94" cy="28" r="1" fill="#FF5C5C" opacity="0.7"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.8s" repeatCount="indefinite"/></circle>
+        <circle cx="18" cy="40" r="5" fill="#E8DEFF" stroke="#6C47FF" stroke-width="1"/>
+        <text x="18" y="43" text-anchor="middle" font-size="7" font-weight="bold" fill="#6C47FF">7</text>
+      </svg>
+      <h2>Bienvenue, je suis <span>Nuta</span> &#x2728;</h2>
+      <p id="welcome-text">Avant de r&eacute;v&eacute;ler tes secrets num&eacute;rologiques, j'ai besoin de te conna&icirc;tre un peu...</p>
+
+      <!-- Onboarding step 1: Prénom uniquement -->
+      <div class="onboarding-step" id="step-name">
+        <label class="onboarding-label">Comment tu t'appelles ?</label>
+        <input type="text" id="onboard-name" class="onboarding-input" placeholder="Ton pr&eacute;nom..." maxlength="50" autocomplete="given-name">
+        <button class="onboarding-btn" id="btn-step-name">Continuer &#x2192;</button>
+      </div>
+
+      <!-- Onboarding step 2: Date de naissance -->
+      <div class="onboarding-step hidden" id="step-dob">
+        <label class="onboarding-label" id="dob-label">Et ta date de naissance ?</label>
+        <input type="text" id="onboard-dob" class="onboarding-input" placeholder="ex : 24/06/1990" inputmode="numeric" maxlength="10" autocomplete="bday">
+        <span class="onboard-hint" id="dob-hint">Format : JJ/MM/AAAA</span>
+        <button class="onboarding-btn" id="btn-step-dob">Continuer &#x2192;</button>
+      </div>
+
+      <!-- Onboarding step 3: Centre d'intérêt -->
+      <div class="onboarding-step hidden" id="step-interest">
+        <label class="onboarding-label" id="interest-label">Qu'est-ce qui t'int&eacute;resse le plus ?</label>
+        <div class="interest-grid">
+          <button class="interest-btn" data-interest="chemin de vie et mission de vie">&#x1F31F; Mon chemin de vie</button>
+          <button class="interest-btn" data-interest="compatibilité amoureuse">&#x2764;&#xFE0F; Amour &amp; compatibilit&eacute;</button>
+          <button class="interest-btn" data-interest="carrière et réussite professionnelle">&#x1F4BC; Carri&egrave;re &amp; argent</button>
+          <button class="interest-btn" data-interest="année personnelle et prévisions">&#x1F52E; Pr&eacute;visions 2026</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Cookie banner (in flow, above input) -->
+  <div class="cookie-banner hidden" id="cookie-banner" role="dialog" aria-label="Consentement aux cookies">
+    <p>Ce site utilise uniquement des cookies strictement n&eacute;cessaires. Aucun cookie de suivi. <a href="/privacy.html">En savoir plus</a></p>
+    <button class="cookie-btn cookie-btn-accept" id="cookie-accept">Accepter</button>
+    <button class="cookie-btn cookie-btn-refuse" id="cookie-refuse">Refuser</button>
+  </div>
+
+  <!-- Input -->
+  <div class="input-area">
+    <button class="new-conv-btn" id="new-conv-btn" aria-label="Nouvelle conversation" title="Nouvelle conversation">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <button class="share-btn" id="share-btn" aria-label="Partager" title="Partager ma lecture">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 12v7a2 2 0 002 2h12a2 2 0 002-2v-7M16 6l-4-4-4 4M12 2v13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <div class="input-wrapper">
+      <textarea id="message-input" rows="1" placeholder="Ta question à Nuta..." maxlength="2000"></textarea>
+    </div>
+    <button class="send-btn" id="send-btn" aria-label="Envoyer le message">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="white"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Legal footer -->
+  <footer class="legal-footer">
+    &copy; 2026 Nuta &mdash;
+    <a href="/legal.html">Mentions l&eacute;gales</a><span class="sep">|</span><a href="/privacy.html">Confidentialit&eacute;</a><span class="sep">|</span><a href="/terms.html">CGU/CGV</a>
+  </footer>
+
+
+  <div class="share-toast" id="share-toast"></div>
+
+  <script>
+    'use strict';
+
+    // ── i18n ──
+    var LANGS = {
+      fr: {
+        code: 'FR', subtitle: 'Ta guide en num\u00e9rologie', status: 'En ligne',
+        welcomeTitle: 'Bienvenue, je suis <span>Nuta</span> \u2728',
+        welcomeText: 'Avant de r\u00e9v\u00e9ler tes secrets num\u00e9rologiques, j\'ai besoin de te conna\u00eetre un peu...',
+        stepNameLabel: 'Comment tu t\'appelles ?',
+        namePlaceholder: 'Ton pr\u00e9nom...',
+        continueBtn: 'Continuer \u2192',
+        stepDobLabel: 'Et ta date de naissance ?',
+        dobPlaceholder: 'ex : 24/06/1990', dobHint: 'Format : JJ/MM/AAAA',
+        dobError: 'Entre une date valide (ex : 24/06/1990)',
+        stepInterestLabel: 'Qu\'est-ce qui t\'int\u00e9resse le plus ?',
+        interestSuper: 'Super {name} ! Qu\u2019est-ce qui t\u2019int\u00e9resse ?',
+        interest1: '\uD83C\uDF1F Mon chemin de vie', interest2: '\u2764\uFE0F Amour & compatibilit\u00e9',
+        interest3: '\uD83D\uDCBC Carri\u00e8re & argent', interest4: '\uD83D\uDD2E Pr\u00e9visions 2026',
+        inputPlaceholder: 'Ta question à Nuta...',
+        cookieText: 'Ce site utilise uniquement des cookies strictement n\u00e9cessaires. Aucun cookie de suivi.',
+        cookieMore: 'En savoir plus', cookieAccept: 'Accepter', cookieRefuse: 'Refuser',
+        errorConnect: 'Oups, je n\'arrive pas \u00e0 me connecter pour le moment. R\u00e9essaie dans un instant ! \uD83D\uDCAB',
+        errorRate: 'Trop de messages envoy\u00e9s. Veuillez patienter une minute.',
+        introMsg: 'Salut, je m\'appelle {name}, je suis n\u00e9(e) le {dob}. Je voudrais en savoir plus sur {interest}.',
+        dobLabelPersonal: '{name}, quelle est ta date de naissance ?',
+        iChemin: 'chemin de vie et mission de vie', iAmour: 'compatibilit\u00e9 amoureuse',
+        iCarriere: 'carri\u00e8re et r\u00e9ussite professionnelle', iPrevisions: 'ann\u00e9e personnelle et pr\u00e9visions',
+        newConvConfirm: 'Commencer une nouvelle conversation ? L\u2019historique actuel sera conserv\u00e9.',
+        welcomeBack: 'Content de te revoir ! \u2728',
+        shareCopied: 'Lecture copi\u00e9e !',
+        shareTitle: 'Ma lecture num\u00e9rologique par Nuta',
+        shareText: 'D\u00e9couvre ta num\u00e9rologie gratuite sur nuta.fr !'
+      },
+      en: {
+        code: 'EN', subtitle: 'Your numerology guide', status: 'Online',
+        welcomeTitle: 'Welcome, I\'m <span>Nuta</span> \u2728',
+        welcomeText: 'Before revealing your numerological secrets, I need to get to know you a little...',
+        stepNameLabel: 'What\'s your name?',
+        namePlaceholder: 'Your first name...',
+        continueBtn: 'Continue \u2192',
+        stepDobLabel: 'And your date of birth?',
+        dobPlaceholder: 'e.g. 24/06/1990', dobHint: 'Format: DD/MM/YYYY',
+        dobError: 'Enter a valid date (e.g. 24/06/1990)',
+        stepInterestLabel: 'What interests you most?',
+        interestSuper: 'Great {name}! What interests you?',
+        interest1: '\uD83C\uDF1F My life path', interest2: '\u2764\uFE0F Love & compatibility',
+        interest3: '\uD83D\uDCBC Career & money', interest4: '\uD83D\uDD2E 2026 Forecast',
+        inputPlaceholder: 'Your question for Nuta...',
+        cookieText: 'This site only uses strictly necessary cookies. No tracking cookies.',
+        cookieMore: 'Learn more', cookieAccept: 'Accept', cookieRefuse: 'Decline',
+        errorConnect: 'Oops, I can\'t connect right now. Try again in a moment! \uD83D\uDCAB',
+        errorRate: 'Too many messages sent. Please wait a minute.',
+        introMsg: 'Hi, my name is {name}, I was born on {dob}. I\'d like to know more about {interest}.',
+        dobLabelPersonal: '{name}, what\'s your date of birth?',
+        iChemin: 'life path and life mission', iAmour: 'love compatibility',
+        iCarriere: 'career and professional success', iPrevisions: 'personal year and forecasts',
+        newConvConfirm: 'Start a new conversation? Current history will be kept.',
+        welcomeBack: 'Welcome back! \u2728',
+        shareCopied: 'Reading copied!',
+        shareTitle: 'My numerology reading by Nuta',
+        shareText: 'Discover your free numerology on nuta.fr!'
+      },
+      es: {
+        code: 'ES', subtitle: 'Tu gu\u00eda de numerolog\u00eda', status: 'En l\u00ednea',
+        welcomeTitle: 'Bienvenido/a, soy <span>Nuta</span> \u2728',
+        welcomeText: 'Antes de revelar tus secretos numerol\u00f3gicos, necesito conocerte un poco...',
+        stepNameLabel: '\u00bfC\u00f3mo te llamas?',
+        namePlaceholder: 'Tu nombre...',
+        continueBtn: 'Continuar \u2192',
+        stepDobLabel: '\u00bfY tu fecha de nacimiento?',
+        dobPlaceholder: 'ej: 24/06/1990', dobHint: 'Formato: DD/MM/AAAA',
+        dobError: 'Introduce una fecha v\u00e1lida (ej: 24/06/1990)',
+        stepInterestLabel: '\u00bfQu\u00e9 te interesa m\u00e1s?',
+        interestSuper: '\u00a1Genial {name}! \u00bfQu\u00e9 te interesa?',
+        interest1: '\uD83C\uDF1F Mi camino de vida', interest2: '\u2764\uFE0F Amor y compatibilidad',
+        interest3: '\uD83D\uDCBC Carrera y dinero', interest4: '\uD83D\uDD2E Predicciones 2026',
+        inputPlaceholder: 'Tu pregunta para Nuta...',
+        cookieText: 'Este sitio solo usa cookies estrictamente necesarias. Sin cookies de rastreo.',
+        cookieMore: 'M\u00e1s info', cookieAccept: 'Aceptar', cookieRefuse: 'Rechazar',
+        errorConnect: '\u00a1Ups, no puedo conectarme ahora. Int\u00e9ntalo en un momento! \uD83D\uDCAB',
+        errorRate: 'Demasiados mensajes enviados. Espera un minuto.',
+        introMsg: 'Hola, me llamo {name}, nac\u00ed el {dob}. Me gustar\u00eda saber m\u00e1s sobre {interest}.',
+        dobLabelPersonal: '{name}, \u00bfcu\u00e1l es tu fecha de nacimiento?',
+        iChemin: 'camino de vida y misi\u00f3n', iAmour: 'compatibilidad amorosa',
+        iCarriere: 'carrera y \u00e9xito profesional', iPrevisions: 'a\u00f1o personal y predicciones',
+        newConvConfirm: '\u00bfIniciar una nueva conversaci\u00f3n? El historial actual se conservar\u00e1.',
+        welcomeBack: '\u00a1Me alegro de verte! \u2728',
+        shareCopied: '\u00a1Lectura copiada!',
+        shareTitle: 'Mi lectura numerol\u00f3gica por Nuta',
+        shareText: '\u00a1Descubre tu numerolog\u00eda gratis en nuta.fr!'
+      },
+      de: {
+        code: 'DE', subtitle: 'Dein Numerologie-Guide', status: 'Online',
+        welcomeTitle: 'Willkommen, ich bin <span>Nuta</span> \u2728',
+        welcomeText: 'Bevor ich deine numerologischen Geheimnisse enth\u00fclle, muss ich dich ein wenig kennenlernen...',
+        stepNameLabel: 'Wie hei\u00dft du?',
+        namePlaceholder: 'Dein Vorname...',
+        continueBtn: 'Weiter \u2192',
+        stepDobLabel: 'Und dein Geburtsdatum?',
+        dobPlaceholder: 'z.B. 24/06/1990', dobHint: 'Format: TT/MM/JJJJ',
+        dobError: 'Gib ein g\u00fcltiges Datum ein (z.B. 24/06/1990)',
+        stepInterestLabel: 'Was interessiert dich am meisten?',
+        interestSuper: 'Super {name}! Was interessiert dich?',
+        interest1: '\uD83C\uDF1F Mein Lebensweg', interest2: '\u2764\uFE0F Liebe & Kompatibilit\u00e4t',
+        interest3: '\uD83D\uDCBC Karriere & Geld', interest4: '\uD83D\uDD2E Prognosen 2026',
+        inputPlaceholder: 'Deine Frage an Nuta...',
+        cookieText: 'Diese Seite verwendet nur unbedingt notwendige Cookies. Keine Tracking-Cookies.',
+        cookieMore: 'Mehr erfahren', cookieAccept: 'Akzeptieren', cookieRefuse: 'Ablehnen',
+        errorConnect: 'Ups, ich kann mich gerade nicht verbinden. Versuch es gleich nochmal! \uD83D\uDCAB',
+        errorRate: 'Zu viele Nachrichten. Bitte warte eine Minute.',
+        introMsg: 'Hallo, ich hei\u00dfe {name}, geboren am {dob}. Ich m\u00f6chte mehr \u00fcber {interest} erfahren.',
+        dobLabelPersonal: '{name}, wann bist du geboren?',
+        iChemin: 'Lebensweg und Lebensmission', iAmour: 'Liebeskompatibilit\u00e4t',
+        iCarriere: 'Karriere und beruflicher Erfolg', iPrevisions: 'pers\u00f6nliches Jahr und Prognosen',
+        newConvConfirm: 'Neues Gespr\u00e4ch starten? Der aktuelle Verlauf bleibt erhalten.',
+        welcomeBack: 'Sch\u00f6n, dich wiederzusehen! \u2728',
+        shareCopied: 'Lesung kopiert!',
+        shareTitle: 'Meine Numerologie-Lesung von Nuta',
+        shareText: 'Entdecke deine kostenlose Numerologie auf nuta.fr!'
+      },
+      it: {
+        code: 'IT', subtitle: 'La tua guida di numerologia', status: 'Online',
+        welcomeTitle: 'Benvenuto/a, sono <span>Nuta</span> \u2728',
+        welcomeText: 'Prima di rivelare i tuoi segreti numerologici, ho bisogno di conoscerti un po\'...',
+        stepNameLabel: 'Come ti chiami?',
+        namePlaceholder: 'Il tuo nome...',
+        continueBtn: 'Continua \u2192',
+        stepDobLabel: 'E la tua data di nascita?',
+        dobPlaceholder: 'es: 24/06/1990', dobHint: 'Formato: GG/MM/AAAA',
+        dobError: 'Inserisci una data valida (es: 24/06/1990)',
+        stepInterestLabel: 'Cosa ti interessa di pi\u00f9?',
+        interestSuper: 'Fantastico {name}! Cosa ti interessa?',
+        interest1: '\uD83C\uDF1F Il mio percorso di vita', interest2: '\u2764\uFE0F Amore e compatibilit\u00e0',
+        interest3: '\uD83D\uDCBC Carriera e denaro', interest4: '\uD83D\uDD2E Previsioni 2026',
+        inputPlaceholder: 'La tua domanda per Nuta...',
+        cookieText: 'Questo sito utilizza solo cookie strettamente necessari. Nessun cookie di tracciamento.',
+        cookieMore: 'Scopri di pi\u00f9', cookieAccept: 'Accetta', cookieRefuse: 'Rifiuta',
+        errorConnect: 'Ops, non riesco a connettermi ora. Riprova tra un momento! \uD83D\uDCAB',
+        errorRate: 'Troppi messaggi inviati. Attendi un minuto.',
+        introMsg: 'Ciao, mi chiamo {name}, sono nato/a il {dob}. Vorrei sapere di pi\u00f9 su {interest}.',
+        dobLabelPersonal: '{name}, qual \u00e8 la tua data di nascita?',
+        iChemin: 'percorso di vita e missione', iAmour: 'compatibilit\u00e0 amorosa',
+        iCarriere: 'carriera e successo professionale', iPrevisions: 'anno personale e previsioni',
+        newConvConfirm: 'Iniziare una nuova conversazione? La cronologia attuale verr\u00e0 conservata.',
+        welcomeBack: 'Che bello rivederti! \u2728',
+        shareCopied: 'Lettura copiata!',
+        shareTitle: 'La mia lettura numerologica di Nuta',
+        shareText: 'Scopri la tua numerologia gratuita su nuta.fr!'
+      }
+    };
+
+    var currentLang = 'fr';
+
+    // Detect language from browser or stored preference
+    (function detectLang() {
+      var stored = null;
+      try { stored = localStorage.getItem('nuta_lang'); } catch(e) {}
+      if (stored && LANGS[stored]) { currentLang = stored; return; }
+      var nav = (navigator.language || navigator.userLanguage || 'fr').toLowerCase();
+      if (nav.startsWith('es')) currentLang = 'es';
+      else if (nav.startsWith('de')) currentLang = 'de';
+      else if (nav.startsWith('it')) currentLang = 'it';
+      else if (nav.startsWith('en')) currentLang = 'en';
+      else currentLang = 'fr';
+    })();
+
+    function t(key) { return LANGS[currentLang][key] || LANGS.fr[key] || key; }
+
+    function applyLanguage() {
+      document.documentElement.lang = currentLang;
+      document.getElementById('lang-btn').textContent = t('code');
+      document.querySelector('.header-text p').textContent = t('subtitle');
+      document.getElementById('status-text').textContent = t('status');
+      // Welcome
+      document.querySelector('.welcome h2').innerHTML = t('welcomeTitle');
+      document.getElementById('welcome-text').textContent = t('welcomeText');
+      // Step 1
+      document.querySelector('#step-name .onboarding-label').textContent = t('stepNameLabel');
+      document.getElementById('onboard-name').placeholder = t('namePlaceholder');
+      document.getElementById('btn-step-name').textContent = t('continueBtn');
+      // Step 2
+      document.getElementById('dob-label').textContent = t('stepDobLabel');
+      document.getElementById('onboard-dob').placeholder = t('dobPlaceholder');
+      document.getElementById('dob-hint').textContent = t('dobHint');
+      document.getElementById('btn-step-dob').textContent = t('continueBtn');
+      // Step 3
+      document.getElementById('interest-label').textContent = t('stepInterestLabel');
+      var intBtns = document.querySelectorAll('.interest-btn');
+      if (intBtns[0]) intBtns[0].textContent = t('interest1');
+      if (intBtns[1]) intBtns[1].textContent = t('interest2');
+      if (intBtns[2]) intBtns[2].textContent = t('interest3');
+      if (intBtns[3]) intBtns[3].textContent = t('interest4');
+      // Input
+      document.getElementById('message-input').placeholder = t('inputPlaceholder');
+      // Cookie
+      var cookieP = document.querySelector('#cookie-banner p');
+      if (cookieP) cookieP.innerHTML = t('cookieText') + ' <a href="/privacy.html">' + t('cookieMore') + '</a>';
+      document.getElementById('cookie-accept').textContent = t('cookieAccept');
+      document.getElementById('cookie-refuse').textContent = t('cookieRefuse');
+      // Active option highlight
+      document.querySelectorAll('.lang-option').forEach(function(o) {
+        o.classList.toggle('active', o.getAttribute('data-lang') === currentLang);
+      });
+    }
+
+    var chatArea = document.getElementById('chat-area');
+    var input = document.getElementById('message-input');
+    var sendBtn = document.getElementById('send-btn');
+    var welcome = document.getElementById('welcome');
+
+    // Persistent session: reuse sessionId for returning users
+    var storedSession = null;
+    try { storedSession = localStorage.getItem('nuta_session_id'); } catch(e) {}
+    var sessionId = storedSession || 'session_' + Math.random().toString(36).substring(2, 10);
+    try { localStorage.setItem('nuta_session_id', sessionId); } catch(e) {}
+    var isWaiting = false;
+
+    // ── Cookie consent ──
+    (function initCookieBanner() {
+      var CONSENT_KEY = 'nuta_cookie_consent';
+      var stored = null;
+      try { stored = localStorage.getItem(CONSENT_KEY); } catch(e) {}
+      if (!stored) {
+        document.getElementById('cookie-banner').classList.remove('hidden');
+      }
+    })();
+
+    function acceptCookies() {
+      try { localStorage.setItem('nuta_cookie_consent', 'accepted'); } catch(e) {}
+      document.getElementById('cookie-banner').classList.add('hidden');
+    }
+
+    function refuseCookies() {
+      try { localStorage.setItem('nuta_cookie_consent', 'refused'); } catch(e) {}
+      document.getElementById('cookie-banner').classList.add('hidden');
+    }
+
+    // ── Auto-resize textarea ──
+    input.addEventListener('input', function() {
+      input.style.height = 'auto';
+      input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+    });
+
+    function handleKeyDown(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    }
+
+    function sendSuggestion(btn) {
+      input.value = btn.textContent;
+      sendMessage();
+    }
+
+    function escapeHtml(text) {
+      var div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function formatMessage(text) {
+      // Escape HTML first to prevent XSS, then apply safe formatting
+      text = escapeHtml(text);
+      text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      text = text.replace(/__(.*?)__/g, '<strong>$1</strong>');
+      text = text.replace(/(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
+      return text;
+    }
+
+    function addMessage(content, type) {
+      if (welcome && type === 'user') {
+        welcome.style.display = 'none';
+      }
+
+      var msg = document.createElement('div');
+      msg.className = 'message ' + type;
+
+      var avatar = document.createElement('div');
+      avatar.className = 'message-avatar';
+      avatar.setAttribute('aria-hidden', 'true');
+
+      if (type === 'bot') {
+        avatar.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.09 6.26L20.18 9l-5 3.64L16.82 19 12 15.27 7.18 19l1.64-6.36-5-3.64 6.09-.74z" fill="#6C47FF"/></svg>';
+      } else {
+        avatar.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" fill="white"/></svg>';
+      }
+
+      var bubble = document.createElement('div');
+      bubble.className = 'message-bubble';
+      if (type === 'user') {
+        bubble.textContent = content;
+      } else {
+        bubble.innerHTML = formatMessage(content);
+      }
+
+      msg.appendChild(avatar);
+      msg.appendChild(bubble);
+      chatArea.appendChild(msg);
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    function showTyping() {
+      var typing = document.createElement('div');
+      typing.className = 'typing';
+      typing.id = 'typing';
+
+      var avatar = document.createElement('div');
+      avatar.className = 'message-avatar';
+      avatar.style.background = 'var(--accent-purple)';
+      avatar.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.09 6.26L20.18 9l-5 3.64L16.82 19 12 15.27 7.18 19l1.64-6.36-5-3.64 6.09-.74z" fill="#6C47FF"/></svg>';
+
+      var dots = document.createElement('div');
+      dots.className = 'typing-dots';
+      dots.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+
+      typing.appendChild(avatar);
+      typing.appendChild(dots);
+      chatArea.appendChild(typing);
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    function hideTyping() {
+      var typing = document.getElementById('typing');
+      if (typing) typing.remove();
+    }
+
+    function addStreamingMessage() {
+      if (welcome) welcome.style.display = 'none';
+
+      var msg = document.createElement('div');
+      msg.className = 'message bot';
+
+      var avatar = document.createElement('div');
+      avatar.className = 'message-avatar';
+      avatar.setAttribute('aria-hidden', 'true');
+      avatar.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.09 6.26L20.18 9l-5 3.64L16.82 19 12 15.27 7.18 19l1.64-6.36-5-3.64 6.09-.74z" fill="#6C47FF"/></svg>';
+
+      var bubble = document.createElement('div');
+      bubble.className = 'message-bubble';
+      bubble.id = 'streaming-bubble';
+
+      msg.appendChild(avatar);
+      msg.appendChild(bubble);
+      chatArea.appendChild(msg);
+      chatArea.scrollTop = chatArea.scrollHeight;
+      return bubble;
+    }
+
+    async function sendMessage() {
+      var text = input.value.trim();
+      if (!text || isWaiting) return;
+
+      isWaiting = true;
+      sendBtn.disabled = true;
+      input.value = '';
+      input.style.height = 'auto';
+
+      addMessage(text, 'user');
+      showTyping();
+
+      try {
+        var res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, sessionId: sessionId, lang: currentLang, userName: onboardData.name, userDob: onboardData.dob }),
+        });
+
+        if (res.status === 429) {
+          hideTyping();
+          addMessage(t('errorRate'), 'bot');
+          isWaiting = false;
+          sendBtn.disabled = false;
+          input.focus();
+          return;
+        }
+
+        if (!res.ok) throw new Error('Erreur r\u00e9seau');
+
+        hideTyping();
+        var bubble = addStreamingMessage();
+        var fullText = '';
+
+        var reader = res.body.getReader();
+        var decoder = new TextDecoder();
+        var buffer = '';
+
+        while (true) {
+          var result = await reader.read();
+          if (result.done) break;
+
+          buffer += decoder.decode(result.value, { stream: true });
+          var lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+
+          for (var i = 0; i < lines.length; i++) {
+            var line = lines[i].trim();
+            if (!line.startsWith('data: ')) continue;
+            try {
+              var data = JSON.parse(line.slice(6));
+              if (data.type === 'delta') {
+                fullText += data.text;
+                bubble.innerHTML = formatMessage(fullText);
+                chatArea.scrollTop = chatArea.scrollHeight;
+              } else if (data.type === 'error') {
+                bubble.innerHTML = formatMessage(data.error || 'Erreur de connexion.');
+              }
+            } catch(e) {}
+          }
+        }
+
+        bubble.removeAttribute('id');
+      } catch (err) {
+        hideTyping();
+        addMessage(t('errorConnect'), 'bot');
+      }
+
+      isWaiting = false;
+      sendBtn.disabled = false;
+      input.focus();
+    }
+
+    // ── Onboarding ──
+    var onboardData = { name: '', dob: '', interest: '' };
+    // Load stored onboarding data for session recovery
+    try {
+      var storedName = localStorage.getItem('nuta_user_name');
+      var storedDob = localStorage.getItem('nuta_user_dob');
+      if (storedName) onboardData.name = storedName;
+      if (storedDob) onboardData.dob = storedDob;
+    } catch(e) {}
+
+    var nameInput = document.getElementById('onboard-name');
+    var dobInput = document.getElementById('onboard-dob');
+    var btnStepName = document.getElementById('btn-step-name');
+    var btnStepDob = document.getElementById('btn-step-dob');
+
+    // Check if returning user
+    var returningUser = false;
+    try { returningUser = localStorage.getItem('nuta_onboarded') === 'true'; } catch(e) {}
+    var newConvBtn = document.getElementById('new-conv-btn');
+    var shareBtn = document.getElementById('share-btn');
+
+    if (returningUser && storedSession) {
+      // Skip onboarding, go straight to chat
+      welcome.style.display = 'none';
+      newConvBtn.classList.add('visible');
+      shareBtn.classList.add('visible');
+      // Load chat history from server
+      (function loadHistory() {
+        fetch('/api/history/' + encodeURIComponent(sessionId))
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            if (data.messages && data.messages.length > 0) {
+              data.messages.forEach(function(m) {
+                addMessage(m.content, m.role === 'user' ? 'user' : 'bot');
+              });
+            } else {
+              // No history found, show a welcome-back message
+              addMessage(t('welcomeBack'), 'bot');
+            }
+          })
+          .catch(function() {
+            // Network error, show welcome-back anyway
+            addMessage(t('welcomeBack'), 'bot');
+          });
+      })();
+    }
+
+    // ── New conversation function ──
+    function startNewConversation() {
+      if (!confirm(t('newConvConfirm'))) return;
+      // Generate new session
+      sessionId = 'session_' + Math.random().toString(36).substring(2, 10);
+      try { localStorage.setItem('nuta_session_id', sessionId); } catch(e) {}
+      try { localStorage.removeItem('nuta_onboarded'); } catch(e) {}
+      try { localStorage.removeItem('nuta_user_name'); } catch(e) {}
+      try { localStorage.removeItem('nuta_user_dob'); } catch(e) {}
+      // Clear chat
+      chatArea.innerHTML = '';
+      // Re-add welcome screen
+      chatArea.appendChild(welcome);
+      welcome.style.display = '';
+      // Reset onboarding steps
+      document.getElementById('step-name').classList.remove('hidden');
+      document.getElementById('step-dob').classList.add('hidden');
+      document.getElementById('step-interest').classList.add('hidden');
+      nameInput.value = '';
+      dobInput.value = '';
+      newConvBtn.classList.remove('visible');
+      shareBtn.classList.remove('visible');
+      returningUser = false;
+      nameInput.focus();
+    }
+
+    // Header click → new conversation
+    document.getElementById('header-home').addEventListener('click', function() {
+      if (welcome.style.display === 'none' || welcome.style.display === '') {
+        // Only if we're in chat mode (not already on welcome)
+        if (chatArea.querySelector('.message') || welcome.style.display === 'none') {
+          startNewConversation();
+        }
+      }
+    });
+    document.getElementById('header-home').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        this.click();
+      }
+    });
+
+    // New conversation button click
+    newConvBtn.addEventListener('click', function() {
+      startNewConversation();
+    });
+
+    btnStepName.addEventListener('click', function() {
+      var name = nameInput.value.trim();
+      if (!name) { nameInput.focus(); return; }
+      onboardData.name = name;
+      document.getElementById('step-name').classList.add('hidden');
+      document.getElementById('step-dob').classList.remove('hidden');
+      document.getElementById('dob-label').textContent = t('dobLabelPersonal').replace('{name}', name);
+      dobInput.focus();
+    });
+
+    nameInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') btnStepName.click();
+    });
+
+    // Auto-format date: add slashes as user types
+    dobInput.addEventListener('input', function() {
+      var v = dobInput.value.replace(/[^\d]/g, '');
+      if (v.length > 8) v = v.substring(0, 8);
+      if (v.length >= 5) {
+        v = v.substring(0, 2) + '/' + v.substring(2, 4) + '/' + v.substring(4);
+      } else if (v.length >= 3) {
+        v = v.substring(0, 2) + '/' + v.substring(2);
+      }
+      dobInput.value = v;
+      // Clear error state on typing
+      dobInput.classList.remove('input-error');
+      document.getElementById('dob-hint').textContent = t('dobHint');
+      document.getElementById('dob-hint').classList.remove('error');
+    });
+
+    function parseDob(val) {
+      // Accept JJ/MM/AAAA or JJ-MM-AAAA or JJ.MM.AAAA
+      var parts = val.trim().split(/[\/\-\.]/);
+      if (parts.length !== 3) return null;
+      var day = parseInt(parts[0], 10);
+      var month = parseInt(parts[1], 10);
+      var year = parseInt(parts[2], 10);
+      if (isNaN(day) || isNaN(month) || isNaN(year)) return null;
+      if (day < 1 || day > 31 || month < 1 || month > 12) return null;
+      if (year < 1900 || year > 2015) return null;
+      return { day: day, month: month, year: year };
+    }
+
+    btnStepDob.addEventListener('click', function() {
+      var parsed = parseDob(dobInput.value);
+      if (!parsed) {
+        dobInput.classList.add('input-error');
+        var hint = document.getElementById('dob-hint');
+        hint.textContent = t('dobError');
+        hint.classList.add('error');
+        dobInput.focus();
+        return;
+      }
+      var dd = String(parsed.day).padStart(2, '0');
+      var mm = String(parsed.month).padStart(2, '0');
+      onboardData.dob = dd + '/' + mm + '/' + parsed.year;
+      document.getElementById('step-dob').classList.add('hidden');
+      document.getElementById('step-interest').classList.remove('hidden');
+      document.getElementById('interest-label').textContent = t('interestSuper').replace('{name}', onboardData.name);
+    });
+
+    dobInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') btnStepDob.click();
+    });
+
+    var interestKeys = ['iChemin', 'iAmour', 'iCarriere', 'iPrevisions'];
+    document.querySelectorAll('.interest-btn').forEach(function(btn, idx) {
+      btn.addEventListener('click', function() {
+        onboardData.interest = t(interestKeys[idx]);
+        startChat();
+      });
+    });
+
+    function startChat() {
+      welcome.style.display = 'none';
+      newConvBtn.classList.add('visible');
+      shareBtn.classList.add('visible');
+      // Mark as onboarded for returning visits + store user data for session recovery
+      try {
+        localStorage.setItem('nuta_onboarded', 'true');
+        localStorage.setItem('nuta_user_name', onboardData.name);
+        localStorage.setItem('nuta_user_dob', onboardData.dob);
+      } catch(e) {}
+      // Build intro message with name only (surname asked later by chatbot)
+      var introMsg = t('introMsg').replace('{name}', onboardData.name).replace('{dob}', onboardData.dob).replace('{interest}', onboardData.interest);
+      input.value = introMsg;
+      sendMessage();
+    }
+
+    // ── Event listeners (no inline onclick for CSP compliance) ──
+    sendBtn.addEventListener('click', function() { sendMessage(); });
+
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    document.getElementById('cookie-accept').addEventListener('click', function() { acceptCookies(); });
+    document.getElementById('cookie-refuse').addEventListener('click', function() { refuseCookies(); });
+
+    // ── Share button ──
+    shareBtn.addEventListener('click', function() {
+      // Extract bot messages only (the reading)
+      var botMessages = chatArea.querySelectorAll('.message.bot .message-bubble');
+      if (botMessages.length === 0) return;
+
+      var shareContent = '';
+      botMessages.forEach(function(bubble) {
+        shareContent += bubble.textContent.trim() + '\n\n';
+      });
+      shareContent += '---\n' + t('shareText') + '\nhttps://nuta.fr';
+
+      // Try native share API (mobile), fallback to clipboard
+      if (navigator.share) {
+        navigator.share({
+          title: t('shareTitle'),
+          text: shareContent
+        }).catch(function() {});
+      } else {
+        navigator.clipboard.writeText(shareContent).then(function() {
+          showToast(t('shareCopied'));
+        }).catch(function() {
+          // Fallback for older browsers
+          var textarea = document.createElement('textarea');
+          textarea.value = shareContent;
+          textarea.style.position = 'fixed';
+          textarea.style.opacity = '0';
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+          showToast(t('shareCopied'));
+        });
+      }
+    });
+
+    function showToast(msg) {
+      var toast = document.getElementById('share-toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(function() { toast.classList.remove('show'); }, 2000);
+    }
+
+    // ── Language switcher ──
+    document.getElementById('lang-btn').addEventListener('click', function(e) {
+      e.stopPropagation();
+      document.getElementById('lang-dropdown').classList.toggle('open');
+    });
+
+    document.querySelectorAll('.lang-option').forEach(function(opt) {
+      opt.addEventListener('click', function() {
+        currentLang = opt.getAttribute('data-lang');
+        try { localStorage.setItem('nuta_lang', currentLang); } catch(e) {}
+        applyLanguage();
+        document.getElementById('lang-dropdown').classList.remove('open');
+      });
+    });
+
+    // Close dropdown on outside click
+    document.addEventListener('click', function() {
+      document.getElementById('lang-dropdown').classList.remove('open');
+    });
+
+    // ── Text size toggle ──
+    var textSizes = ['', 'text-lg', 'text-xl'];
+    var textSizeLabels = ['A+', 'A++', 'A'];
+    var textSizeIdx = 0;
+    try {
+      var storedSize = localStorage.getItem('nuta_text_size');
+      if (storedSize) {
+        textSizeIdx = textSizes.indexOf(storedSize);
+        if (textSizeIdx < 0) textSizeIdx = 0;
+        if (textSizes[textSizeIdx]) document.body.classList.add(textSizes[textSizeIdx]);
+      }
+    } catch(e) {}
+    document.getElementById('text-size-btn').textContent = textSizeLabels[textSizeIdx];
+
+    document.getElementById('text-size-btn').addEventListener('click', function() {
+      if (textSizes[textSizeIdx]) document.body.classList.remove(textSizes[textSizeIdx]);
+      textSizeIdx = (textSizeIdx + 1) % textSizes.length;
+      if (textSizes[textSizeIdx]) document.body.classList.add(textSizes[textSizeIdx]);
+      document.getElementById('text-size-btn').textContent = textSizeLabels[textSizeIdx];
+      try { localStorage.setItem('nuta_text_size', textSizes[textSizeIdx]); } catch(e) {}
+    });
+
+    // Apply language on load
+    applyLanguage();
+
+    // Focus name input on load (if not returning user)
+    if (!returningUser) nameInput.focus();
+  </script>
+</body>
+</html>

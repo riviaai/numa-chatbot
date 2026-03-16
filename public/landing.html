@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Numa - Découvrez votre profil numérologique avec l'IA. Entrez votre date de naissance pour une analyse complète et personnalisée.">
+  <meta name="theme-color" content="#6C47FF">
+  <title>Numa - Découvrez votre profil numérologique</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #6C47FF;
+      --primary-dark: #5535E0;
+      --primary-light: #8B6FFF;
+      --accent-gold: #FFD166;
+      --text-light: #E0E0E0;
+      --text-muted: #A0A0A0;
+      --surface-dark: rgba(30, 20, 60, 0.5);
+      --surface-darker: rgba(20, 10, 40, 0.8);
+      --radius: 12px;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #0a0a1a 0%, #1a0a3a 50%, #0a1a2a 100%);
+      color: var(--text-light);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      position: relative;
+    }
+
+    /* Animated background elements */
+    .bg-stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .star {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      animation: twinkle 3s infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.8; }
+    }
+
+    /* Main container */
+    .container {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    /* Header/Navigation */
+    header {
+      padding: 24px 20px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 209, 102, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .logo {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, #FFD166 0%, #6C47FF 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 4px;
+    }
+
+    .tagline {
+      font-size: 14px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Hero Section */
+    .hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: clamp(36px, 8vw, 64px);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 24px;
+      color: var(--text-light);
+      letter-spacing: -1px;
+    }
+
+    .hero-accent {
+      background: linear-gradient(135deg, #FFD166 0%, #6C47FF 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin-bottom: 48px;
+      line-height: 1.6;
+    }
+
+    .cta-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 48px;
+      font-size: 18px;
+      font-weight: 600;
+      background: linear-gradient(135deg, #FFD166 0%, #6C47FF 100%);
+      color: #0a0a1a;
+      text-decoration: none;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 40px rgba(108, 71, 255, 0.3);
+      gap: 12px;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 50px rgba(108, 71, 255, 0.4);
+    }
+
+    .cta-button:active {
+      transform: translateY(-1px);
+    }
+
+    /* How It Works Section */
+    .how-it-works {
+      padding: 80px 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: clamp(28px, 6vw, 48px);
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 60px;
+      color: var(--text-light);
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 32px;
+      margin-bottom: 60px;
+    }
+
+    .step {
+      background: var(--surface-dark);
+      border: 1px solid rgba(255, 209, 102, 0.1);
+      border-radius: var(--radius);
+      padding: 32px 24px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .step:hover {
+      background: var(--surface-darker);
+      border-color: rgba(255, 209, 102, 0.3);
+      transform: translateY(-5px);
+    }
+
+    .step-number {
+      font-size: 48px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #FFD166 0%, #6C47FF 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+    }
+
+    .step h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--text-light);
+    }
+
+    .step p {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* What You'll Discover Section */
+    .features {
+      padding: 80px 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: var(--surface-dark);
+      border: 1px solid rgba(255, 209, 102, 0.15);
+      border-radius: var(--radius);
+      padding: 28px 20px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .feature-card:hover {
+      background: var(--surface-darker);
+      border-color: rgba(255, 209, 102, 0.4);
+      transform: translateY(-3px);
+    }
+
+    .feature-icon {
+      font-size: 40px;
+      margin-bottom: 16px;
+    }
+
+    .feature-card h4 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-light);
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      padding: 80px 20px;
+      text-align: center;
+    }
+
+    .cta-section h2 {
+      font-size: clamp(32px, 6vw, 48px);
+      font-weight: 800;
+      margin-bottom: 24px;
+      color: var(--text-light);
+    }
+
+    .cta-section p {
+      font-size: 18px;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Footer */
+    footer {
+      padding: 40px 20px;
+      border-top: 1px solid rgba(255, 209, 102, 0.1);
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--accent-gold);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero {
+        padding: 30px 20px;
+      }
+
+      .hero h1 {
+        font-size: 40px;
+        margin-bottom: 20px;
+      }
+
+      .hero p {
+        font-size: 16px;
+        margin-bottom: 36px;
+      }
+
+      .how-it-works,
+      .features,
+      .cta-section {
+        padding: 60px 20px;
+      }
+
+      .steps {
+        gap: 24px;
+      }
+
+      .step {
+        padding: 24px 20px;
+      }
+    }
+
+    /* Accessibility */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+
+    @media (prefers-color-scheme: light) {
+      body {
+        background: linear-gradient(135deg, #f5f3ff 0%, #e8d5ff 50%, #f0f5ff 100%);
+      }
+
+      :root {
+        --text-light: #1a1a2e;
+        --text-muted: #5a5a7a;
+      }
+
+      .hero p,
+      .step p,
+      .feature-card p,
+      .cta-section p {
+        color: var(--text-muted);
+      }
+
+      header {
+        border-bottom-color: rgba(108, 71, 255, 0.2);
+      }
+
+      .step,
+      .feature-card {
+        background: rgba(255, 255, 255, 0.6);
+        border-color: rgba(108, 71, 255, 0.15);
+      }
+
+      .step:hover,
+      .feature-card:hover {
+        background: rgba(255, 255, 255, 0.8);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated background -->
+  <div class="bg-stars" id="bgStars"></div>
+
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="logo">Numa</div>
+      <div class="tagline">Numérologie Personnalisée par l'IA</div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <h1>Découvrez votre<br><span class="hero-accent">profil numérologique</span></h1>
+      <p>Entrez votre date de naissance pour une analyse complète et personnalisée de votre chemin de vie, pilotée par l'IA.</p>
+      <a href="/chat" class="cta-button">
+        <span>Commencer mon analyse gratuite</span>
+      </a>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works">
+      <h2 class="section-title">Comment ça fonctionne</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h3>Entrez votre date de naissance</h3>
+          <p>Partagez votre date et prénom pour commencer. C'est gratuit et sécurisé.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <h3>L'IA analyse votre profil</h3>
+          <p>Notre système calcule les nombres clés de votre numérologie personnelle.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <h3>Recevez votre analyse</h3>
+          <p>Découvrez des insights profonds sur votre personnalité et votre destinée.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- What You'll Discover -->
+    <section class="features">
+      <h2 class="section-title">Qu'allez-vous découvrir</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">127</div>
+          <h4>Chemin de vie</h4>
+          <p>Votre mission principale et les défis que vous rencontrerez.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">165</div>
+          <h4>Nombre d'expression</h4>
+          <p>Vos talents naturels et votre façon de vous exprimer.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">147</div>
+          <h4>Compatibilités</h4>
+          <p>Comment vous harmonisez avec les autres.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">175</div>
+          <h4>Prévisions</h4>
+          <p>Les cycles à venir et les opportunités.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <h2>Prêt à explorer votre numérologie</h2>
+      <p>Commencez votre voyage de découverte personnelle. Réponses instantanées alimentées par l'IA.</p>
+      <a href="/chat" class="cta-button">
+        <span>Lancer mon analyse</span>
+      </a>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="footer-links">
+        <a href="/privacy.html">Confidentialité</a>
+        <a href="/terms.html">Conditions d'utilisation</a>
+        <a href="/legal.html">Mentions légales</a>
+      </div>
+      <p>Numa par Steven Bos. Créé avec passion pour votre développement personnel.</p>
+    </footer>
+  </div>
+
+  <script>
+    // Generate random stars
+    const bgStars = document.getElementById('bgStars');
+    const starCount = Math.min(window.innerWidth / 50, 100);
+
+    for (let i = 0; i < starCount; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.width = Math.random() * 2 + 1 + 'px';
+      star.style.height = star.style.width;
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      star.style.animationDelay = Math.random() * 3 + 's';
+      bgStars.appendChild(star);
+    }
+  </script>
+</body>
+</html>
