@@ -1,4 +1,5 @@
 import "dotenv/config";
+import * as Sentry from "@sentry/node";
 import Anthropic from "@anthropic-ai/sdk";
 import OpenAI from "openai";
 import express from "express";
@@ -6,6 +7,14 @@ import helmet from "helmet";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
+
+if (process.env.SENTRY_DSN) {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    environment: process.env.NODE_ENV || "development",
+    tracesSampleRate: 0.1,
+  });
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -1321,6 +1330,11 @@ app.get("*", (req, res) => {
   }
   res.sendFile(join(__dirname, "public", "chat.html"));
 });
+
+// ── Sentry error handler (must be before custom error handler) ──
+if (process.env.SENTRY_DSN) {
+  Sentry.setupExpressErrorHandler(app);
+}
 
 // ── Global error handler ──
 app.use((err, req, res, _next) => {
