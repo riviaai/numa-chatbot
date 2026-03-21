@@ -990,6 +990,18 @@ app.post("/api/chat", rateLimit, async (req, res) => {
     return res.status(400).json({ error: "Session invalide." });
   }
 
+  // Validate userName and userDob
+  if (userName !== undefined && userName !== null) {
+    if (typeof userName !== "string" || userName.length > 100) {
+      return res.status(400).json({ error: "Nom invalide (max 100 caracteres)." });
+    }
+  }
+  if (userDob !== undefined && userDob !== null) {
+    if (typeof userDob !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(userDob)) {
+      return res.status(400).json({ error: "Date de naissance invalide (format YYYY-MM-DD attendu)." });
+    }
+  }
+
   const sid = sessionId || "default";
   const isNewSession = !conversationHistories.has(sid);
 
@@ -1221,11 +1233,47 @@ app.post("/api/chat", rateLimit, async (req, res) => {
   }
 });
 
+// ── Rate limiter for history endpoint ──
+const historyRateLimitMap = new Map();
+const HISTORY_RATE_LIMIT_MAX = 30; // max 30 req/min per IP
+
+function historyRateLimit(req, res, next) {
+  const ip = req.ip || req.socket.remoteAddress || "unknown";
+  const now = Date.now();
+  const entry = historyRateLimitMap.get(ip);
+  if (!entry || now - entry.start > RATE_LIMIT_WINDOW) {
+    historyRateLimitMap.set(ip, { start: now, count: 1 });
+    return next();
+  }
+  entry.count++;
+  if (entry.count > HISTORY_RATE_LIMIT_MAX) {
+    const retryAfter = Math.ceil((RATE_LIMIT_WINDOW - (now - entry.start)) / 1000);
+    res.setHeader("Retry-After", String(Math.max(retryAfter, 1)));
+    return res.status(429).json({ error: "Trop de requetes, reessaie dans une minute." });
+  }
+  next();
+}
+
+// Periodic cleanup for history rate limit
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, entry] of historyRateLimitMap) {
+    if (now - entry.start > RATE_LIMIT_WINDOW) {
+      historyRateLimitMap.delete(ip);
+    }
+  }
+}, RATE_LIMIT_CLEANUP_INTERVAL);
+
 // ── API: Get conversation history ──
-app.get("/api/history/:sessionId", (req, res) => {
+app.get("/api/history/:sessionId", historyRateLimit, (req, res) => {
   const sid = req.params.sessionId;
   if (!sid || typeof sid !== "string" || sid.length > 100) {
     return res.status(400).json({ error: "Session invalide." });
+  }
+  // Validate sessionId format (UUID or legacy format)
+  const validSessionId = /^[a-zA-Z0-9_-]{1,100}$/.test(sid);
+  if (!validSessionId) {
+    return res.status(400).json({ error: "Format de session invalide." });
   }
   const session = conversationHistories.get(sid);
   if (!session || !session.messages || session.messages.length === 0) {
@@ -1275,7 +1323,16 @@ app.get("/health/ready", (req, res) => {
 // ── Analytics stats (admin-only) ──
 app.get("/api/stats", (req, res) => {
   const adminKey = process.env.ADMIN_KEY;
-  const providedKey = req.query.key;
+
+  // Accept Authorization: Bearer <key> header (preferred) or query param (legacy)
+  const authHeader = req.headers.authorization;
+  let providedKey = null;
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    providedKey = authHeader.slice(7);
+  } else if (req.query.key) {
+    providedKey = req.query.key;
+    console.warn("[nuta] WARNING: ADMIN_KEY passed as query parameter — use Authorization header instead for security.");
+  }
 
   // If no admin key is set in env, allow access (development mode)
   // If admin key is set, require it to be provided

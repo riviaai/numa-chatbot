@@ -1357,7 +1357,7 @@
     // Persistent session: reuse sessionId for returning users
     var storedSession = null;
     try { storedSession = localStorage.getItem('nuta_session_id'); } catch(e) {}
-    var sessionId = storedSession || 'session_' + Math.random().toString(36).substring(2, 10);
+    var sessionId = storedSession || ((typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Date.now().toString(36) + '-' + Math.random().toString(36).substr(2, 9));
     try { localStorage.setItem('nuta_session_id', sessionId); } catch(e) {}
     var isWaiting = false;
 
@@ -1648,7 +1648,7 @@
     function startNewConversation() {
       if (!confirm(t('newConvConfirm'))) return;
       // Generate new session
-      sessionId = 'session_' + Math.random().toString(36).substring(2, 10);
+      sessionId = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Date.now().toString(36) + '-' + Math.random().toString(36).substr(2, 9);
       try { localStorage.setItem('nuta_session_id', sessionId); } catch(e) {}
       try { localStorage.removeItem('nuta_onboarded'); } catch(e) {}
       try { localStorage.removeItem('nuta_user_name'); } catch(e) {}
