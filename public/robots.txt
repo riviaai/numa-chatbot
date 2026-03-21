@@ -4,4 +4,4 @@ Disallow: /api/
 Disallow: /data/
 
 # Sitemaps
-Sitemap: https://numa.example.com/sitemap.xml
+Sitemap: https://numa.rivia.media/sitemap.xml
