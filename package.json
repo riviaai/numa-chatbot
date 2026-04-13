@@ -16,5 +16,8 @@
     "express": "^4.21.0",
     "helmet": "^8.1.0",
     "openai": "^6.29.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2"
   }
 }
