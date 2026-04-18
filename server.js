@@ -150,7 +150,7 @@ function saveSessions() {
 // Auto-save periodically
 setInterval(saveSessions, SAVE_INTERVAL);
 
-// Cleanup old sessions
+// Cleanup old sessions (7 days)
 setInterval(() => {
   const now = Date.now();
   let cleaned = 0;
@@ -165,6 +165,23 @@ setInterval(() => {
     saveSessions();
   }
 }, SESSION_CLEANUP_INTERVAL);
+
+// Cleanup sessions inactives depuis plus de 30 minutes (memory leak prevention)
+const INACTIVE_SESSION_TTL = 30 * 60 * 1000; // 30 minutes
+setInterval(() => {
+  const now = Date.now();
+  let cleaned = 0;
+  for (const [sid, session] of conversationHistories) {
+    if (session.lastActivity && (now - session.lastActivity) > INACTIVE_SESSION_TTL) {
+      conversationHistories.delete(sid);
+      cleaned++;
+    }
+  }
+  if (cleaned > 0) {
+    console.error(`[nuta] ${cleaned} sessions inactives (>30min) nettoyees.`);
+    saveSessions();
+  }
+}, 5 * 60 * 1000); // check toutes les 5 minutes
 
 // ── Analytics Tracking ──
 const ANALYTICS_FILE = join(DATA_DIR, "analytics.json");
