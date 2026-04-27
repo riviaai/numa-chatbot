@@ -7,12 +7,27 @@ import helmet from "helmet";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
+import { timingSafeEqual, createHash } from "crypto";
 
 if (process.env.SENTRY_DSN) {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
     environment: process.env.NODE_ENV || "development",
     tracesSampleRate: 0.1,
+    beforeSend(event) {
+      // Scrub sensitive data from Sentry events
+      if (event.request) {
+        if (event.request.headers) {
+          delete event.request.headers["authorization"];
+          delete event.request.headers["cookie"];
+          delete event.request.headers["x-api-key"];
+        }
+        if (event.request.data) {
+          delete event.request.data;
+        }
+      }
+      return event;
+    },
   });
 }
 
@@ -20,11 +35,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // ── Validate required environment ──
-if (!process.env.ANTHROPIC_API_KEY) {
-  console.warn(
-    "\n  ANTHROPIC_API_KEY manquante — le chat ne fonctionnera pas sans cle API."
+if (!process.env.ANTHROPIC_API_KEY && !process.env.OPENAI_API_KEY) {
+  throw new Error(
+    "ANTHROPIC_API_KEY ou OPENAI_API_KEY est requise. Lance avec au moins une cle API definie."
   );
-  console.warn("  Lance avec : ANTHROPIC_API_KEY=sk-... node server.js\n");
+}
+if (process.env.NODE_ENV === "production" && !process.env.ADMIN_KEY) {
+  console.warn("[nuta] WARNING: ADMIN_KEY non definie en production — l'endpoint /api/stats est public.");
 }
 
 const app = express();
@@ -1351,10 +1368,23 @@ app.get("/api/stats", (req, res) => {
     console.warn("[nuta] WARNING: ADMIN_KEY passed as query parameter — use Authorization header instead for security.");
   }
 
-  // If no admin key is set in env, allow access (development mode)
-  // If admin key is set, require it to be provided
-  if (adminKey && (!providedKey || providedKey !== adminKey)) {
-    return res.status(403).json({ error: "Unauthorized: invalid or missing admin key." });
+  // In production, always require ADMIN_KEY
+  if (!adminKey) {
+    if (process.env.NODE_ENV === "production") {
+      return res.status(403).json({ error: "Unauthorized." });
+    }
+    // Development: allow without key
+  } else {
+    // Use timingSafeEqual to prevent timing attacks
+    if (!providedKey) {
+      return res.status(403).json({ error: "Unauthorized: missing admin key." });
+    }
+    const expectedBuf = Buffer.from(adminKey);
+    const providedBuf = Buffer.alloc(expectedBuf.length);
+    Buffer.from(providedKey).copy(providedBuf);
+    if (!timingSafeEqual(expectedBuf, providedBuf)) {
+      return res.status(403).json({ error: "Unauthorized: invalid admin key." });
+    }
   }
 
   const avgMessagesPerSession =
